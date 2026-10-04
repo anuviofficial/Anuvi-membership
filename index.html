@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ANUVI Couture Membership</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f8f5ef;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 430px;
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 32px;
+      letter-spacing: 4px;
+      color: #b08d35;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #777;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 22px;
+      padding: 28px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+    }
+
+    .card h2 {
+      text-align: center;
+      margin-bottom: 8px;
+      color: #222;
+    }
+
+    .card p {
+      text-align: center;
+      color: #777;
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      outline: none;
+      font-size: 15px;
+      margin-bottom: 15px;
+    }
+
+    input:focus {
+      border-color: #b08d35;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #b08d35;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #96762c;
+    }
+
+    .membership-card {
+      display: none;
+      margin-top: 22px;
+      border-radius: 18px;
+      padding: 24px;
+      background: linear-gradient(135deg, #1f1f1f, #393939);
+      color: white;
+    }
+
+    .membership-card h3 {
+      color: #d7b75c;
+      letter-spacing: 2px;
+      margin-bottom: 18px;
+    }
+
+    .info {
+      margin-bottom: 12px;
+    }
+
+    .info span {
+      display: block;
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 3px;
+    }
+
+    .info strong {
+      font-size: 16px;
+    }
+
+    .status {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 7px 12px;
+      border-radius: 20px;
+      background: #d7b75c;
+      color: #222;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 18px;
+      color: #888;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="logo">
+      ANUVI
+    </div>
+
+    <div class="subtitle">
+      ANUVI Couture Digital Membership
+    </div>
+
+    <div class="card">
+
+      <h2>Member Login</h2>
+
+      <p>
+        Enter your membership ID to view your membership details.
+      </p>
+
+      <label for="membershipId">
+        Membership ID
+      </label>
+
+      <input
+        type="text"
+        id="membershipId"
+        placeholder="Example: ANUVI001"
+      >
+
+      <button onclick="showMember()">
+        View Membership
+      </button>
+
+      <div
+        class="membership-card"
+        id="membershipCard"
+      >
+
+        <h3>
+          ANUVI COUTURE
+        </h3>
+
+        <div class="info">
+          <span>
+            MEMBERSHIP ID
+          </span>
+
+          <strong id="showId">
+            ANUVI001
+          </strong>
+        </div>
+
+        <div class="info">
+          <span>
+            MEMBER NAME
+          </span>
+
+          <strong id="showName">
+            Roshani Gupta
+          </strong>
+        </div>
+
+        <div class="info">
+          <span>
+            CONTACT
+          </span>
+
+          <strong id="showContact">
+            7974712802
+          </strong>
+        </div>
+
+        <div class="info">
+          <span>
+            MEMBERSHIP STATUS
+          </span>
+
+          <strong>
+            Active
+          </strong>
+        </div>
+
+        <div class="status">
+          MEMBER
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="footer">
+      © ANUVI Couture
+    </div>
+
+  </div>
+
+  <script>
+
+    function showMember() {
+
+      const id = document
+        .getElementById("membershipId")
+        .value
+        .trim()
+        .toUpperCase();
+
+      if (id === "ANUVI001") {
+
+        document
+          .getElementById("showId")
+          .innerText = "ANUVI001";
+
+        document
+          .getElementById("showName")
+          .innerText = "Roshani Gupta";
+
+        document
+          .getElementById("showContact")
+          .innerText = "7974712802";
+
+        document
+          .getElementById("membershipCard")
+          .style.display = "block";
+
+      } else {
+
+        alert("Membership ID not found.");
+
+      }
+
+    }
+
+  </script>
+
+</body>
+</html>
