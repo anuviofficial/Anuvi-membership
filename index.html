@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>ANUVI Couture Membership</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     * {
@@ -196,43 +199,23 @@
         </h3>
 
         <div class="info">
-          <span>
-            MEMBERSHIP ID
-          </span>
-
-          <strong id="showId">
-            ANUVI001
-          </strong>
+          <span>MEMBERSHIP ID</span>
+          <strong id="showId"></strong>
         </div>
 
         <div class="info">
-          <span>
-            MEMBER NAME
-          </span>
-
-          <strong id="showName">
-            Roshani Gupta
-          </strong>
+          <span>MEMBER NAME</span>
+          <strong id="showName"></strong>
         </div>
 
         <div class="info">
-          <span>
-            CONTACT
-          </span>
-
-          <strong id="showContact">
-            7974712802
-          </strong>
+          <span>CONTACT</span>
+          <strong id="showContact"></strong>
         </div>
 
         <div class="info">
-          <span>
-            MEMBERSHIP STATUS
-          </span>
-
-          <strong>
-            Active
-          </strong>
+          <span>MEMBERSHIP STATUS</span>
+          <strong>Active</strong>
         </div>
 
         <div class="status">
@@ -249,9 +232,33 @@
 
   </div>
 
+
   <script>
 
-    function showMember() {
+    // ==============================
+    // SUPABASE CONNECTION
+    // ==============================
+
+    const SUPABASE_URL =
+      "https://vwcabveqbupgomtxbank.supabase.co";
+
+
+    const SUPABASE_KEY =
+      "sb_publishable_ptUS0rXG84wr7A-53970aA_Y328CYJj";
+
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
+    // ==============================
+    // FIND CUSTOMER
+    // ==============================
+
+    async function showMember() {
 
       const id = document
         .getElementById("membershipId")
@@ -259,33 +266,96 @@
         .trim()
         .toUpperCase();
 
-      if (id === "ANUVI001") {
 
-        document
-          .getElementById("showId")
-          .innerText = "ANUVI001";
+      if (!id) {
 
-        document
-          .getElementById("showName")
-          .innerText = "Roshani Gupta";
+        alert("Please enter your Membership ID.");
 
-        document
-          .getElementById("showContact")
-          .innerText = "7974712802";
+        return;
+
+      }
+
+
+      const { data, error } = await supabaseClient
+
+        .from("Customers")
+
+        .select("*")
+
+        .eq("Membership_id", id)
+
+        .maybeSingle();
+
+
+      if (error) {
+
+        console.error(error);
+
+        alert("Something went wrong. Please try again.");
+
+        return;
+
+      }
+
+
+      if (!data) {
 
         document
           .getElementById("membershipCard")
-          .style.display = "block";
-
-      } else {
+          .style.display = "none";
 
         alert("Membership ID not found.");
 
+        return;
+
       }
+
+
+      // Membership ID
+
+      document
+        .getElementById("showId")
+        .innerText =
+        data.Membership_id;
+
+
+      // Customer Name
+
+      document
+        .getElementById("showName")
+        .innerText =
+        data.Customer_name;
+
+
+      // Contact Number
+      // Automatically looks for your contact column
+
+      const contact =
+        data["Contact Number"] ||
+        data["Contact_Num"] ||
+        data["Contact Num"] ||
+        data["contact_number"] ||
+        data["contact"] ||
+        "Not available";
+
+
+      document
+        .getElementById("showContact")
+        .innerText =
+        contact;
+
+
+      // Show membership card
+
+      document
+        .getElementById("membershipCard")
+        .style.display =
+        "block";
 
     }
 
   </script>
 
 </body>
+
 </html>
