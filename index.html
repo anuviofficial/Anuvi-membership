@@ -105,6 +105,11 @@
       background: #96762c;
     }
 
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
     .membership-card {
       display: none;
       margin-top: 22px;
@@ -121,7 +126,7 @@
     }
 
     .info {
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .info span {
@@ -137,13 +142,21 @@
 
     .status {
       display: inline-block;
-      margin-top: 10px;
+      margin-top: 8px;
       padding: 7px 12px;
       border-radius: 20px;
       background: #d7b75c;
       color: #222;
       font-size: 12px;
       font-weight: bold;
+    }
+
+    .error {
+      display: none;
+      margin-top: 15px;
+      text-align: center;
+      color: #b00020;
+      font-size: 14px;
     }
 
     .footer {
@@ -172,27 +185,28 @@
       <h2>Member Login</h2>
 
       <p>
-        Enter your membership ID to view your membership details.
+        Enter your mobile number to view your membership details.
       </p>
 
-      <label for="membershipId">
-        Membership ID
+      <label for="mobile">
+        Mobile Number
       </label>
 
       <input
-        type="text"
-        id="membershipId"
-        placeholder="Example: ANUVI001"
+        type="tel"
+        id="mobile"
+        maxlength="10"
+        inputmode="numeric"
+        placeholder="Enter 10-digit mobile number"
       >
 
-      <button onclick="showMember()">
-        View Membership
+      <button id="checkButton" onclick="showMember()">
+        Check Membership
       </button>
 
-      <div
-        class="membership-card"
-        id="membershipCard"
-      >
+      <div class="error" id="errorMessage"></div>
+
+      <div class="membership-card" id="membershipCard">
 
         <h3>
           ANUVI COUTURE
@@ -204,22 +218,22 @@
         </div>
 
         <div class="info">
-          <span>MEMBER NAME</span>
-          <strong id="showName"></strong>
-        </div>
-
-        <div class="info">
-          <span>CONTACT</span>
-          <strong id="showContact"></strong>
-        </div>
-
-        <div class="info">
           <span>MEMBERSHIP STATUS</span>
-          <strong>Active</strong>
+          <strong id="showStatus"></strong>
+        </div>
+
+        <div class="info">
+          <span>VALID TILL</span>
+          <strong id="showValidTill"></strong>
+        </div>
+
+        <div class="info">
+          <span>MEMBER SINCE</span>
+          <strong id="showCreatedOn"></strong>
         </div>
 
         <div class="status">
-          MEMBER
+          ANUVI MEMBER
         </div>
 
       </div>
@@ -242,10 +256,8 @@
     const SUPABASE_URL =
       "https://vwcabveqbupgomtxbank.supabase.co";
 
-
     const SUPABASE_KEY =
       "sb_publishable_ptUS0rXG84wr7A-53970aA_Y328CYJj";
-
 
     const supabaseClient =
       window.supabase.createClient(
@@ -255,102 +267,161 @@
 
 
     // ==============================
-    // FIND CUSTOMER
+    // CHECK MEMBERSHIP
     // ==============================
 
     async function showMember() {
 
-      const id = document
-        .getElementById("membershipId")
-        .value
-        .trim()
-        .toUpperCase();
+      const mobileInput =
+        document.getElementById("mobile");
+
+      const button =
+        document.getElementById("checkButton");
+
+      const membershipCard =
+        document.getElementById("membershipCard");
+
+      const errorMessage =
+        document.getElementById("errorMessage");
 
 
-      if (!id) {
+      const mobile =
+        mobileInput.value.trim();
 
-        alert("Please enter your Membership ID.");
+
+      // Hide previous result
+      membershipCard.style.display = "none";
+      errorMessage.style.display = "none";
+
+
+      // Check mobile number
+      if (!/^[0-9]{10}$/.test(mobile)) {
+
+        errorMessage.innerText =
+          "Please enter a valid 10-digit mobile number.";
+
+        errorMessage.style.display = "block";
 
         return;
-
       }
 
 
-      const { data, error } = await supabaseClient
-
-        .from("Customers")
-
-        .select("*")
-
-        .eq("Membership_id", id)
-
-        .maybeSingle();
+      button.disabled = true;
+      button.innerText = "Checking...";
 
 
-      if (error) {
+      try {
+
+        // ==============================
+        // CALL SUPABASE FUNCTION
+        // ==============================
+
+        const { data, error } =
+          await supabaseClient.rpc(
+            "get_membership_by_mobile",
+            {
+              p_mobile: mobile
+            }
+          );
+
+
+        console.log("Supabase response:", data);
+
+
+        if (error) {
+
+          console.error("Supabase error:", error);
+
+          errorMessage.innerText =
+            "Unable to check membership. Please try again.";
+
+          errorMessage.style.display = "block";
+
+          return;
+        }
+
+
+        // No membership found
+        if (!data || data.length === 0) {
+
+          errorMessage.innerText =
+            "No membership found for this mobile number.";
+
+          errorMessage.style.display = "block";
+
+          return;
+        }
+
+
+        const member = data[0];
+
+
+        // ==============================
+        // SHOW MEMBERSHIP DETAILS
+        // ==============================
+
+        document.getElementById("showId").innerText =
+          member.membership_id || "Not available";
+
+
+        document.getElementById("showStatus").innerText =
+          member.membership_status || "Not available";
+
+
+        document.getElementById("showValidTill").innerText =
+          formatDate(member.valid_till);
+
+
+        document.getElementById("showCreatedOn").innerText =
+          formatDate(member.membership_created_on);
+
+
+        membershipCard.style.display = "block";
+
+      }
+
+      catch (error) {
 
         console.error(error);
 
-        alert("Something went wrong. Please try again.");
+        errorMessage.innerText =
+          "Something went wrong. Please try again.";
 
-        return;
-
-      }
-
-
-      if (!data) {
-
-        document
-          .getElementById("membershipCard")
-          .style.display = "none";
-
-        alert("Membership ID not found.");
-
-        return;
+        errorMessage.style.display = "block";
 
       }
 
+      finally {
 
-      // Membership ID
+        button.disabled = false;
+        button.innerText = "Check Membership";
 
-      document
-        .getElementById("showId")
-        .innerText =
-        data.Membership_id;
+      }
 
-
-      // Customer Name
-
-      document
-        .getElementById("showName")
-        .innerText =
-        data.Customer_name;
+    }
 
 
-      // Contact Number
-      // Automatically looks for your contact column
+    // ==============================
+    // DATE FORMAT
+    // ==============================
 
-      const contact =
-        data["Contact Number"] ||
-        data["Contact_Num"] ||
-        data["Contact Num"] ||
-        data["contact_number"] ||
-        data["contact"] ||
-        "Not available";
+    function formatDate(dateString) {
 
+      if (!dateString) {
+        return "Not available";
+      }
 
-      document
-        .getElementById("showContact")
-        .innerText =
-        contact;
+      const date =
+        new Date(dateString + "T00:00:00");
 
-
-      // Show membership card
-
-      document
-        .getElementById("membershipCard")
-        .style.display =
-        "block";
+      return date.toLocaleDateString(
+        "en-IN",
+        {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        }
+      );
 
     }
 
