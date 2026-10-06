@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ANUVI Admin</title>
+<title>ANUVI Couture - Admin</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -18,19 +18,17 @@ body{
   margin:0;
   min-height:100vh;
   background:#f7f3ed;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:20px;
+  padding:30px 15px;
 }
 
 .container{
   width:100%;
-  max-width:700px;
+  max-width:850px;
+  margin:auto;
 }
 
 .card{
-  background:white;
+  background:#fff;
   border-radius:18px;
   padding:30px;
   box-shadow:0 10px 35px rgba(0,0,0,.08);
@@ -41,26 +39,26 @@ body{
   text-align:center;
   font-size:32px;
   font-weight:bold;
-  letter-spacing:4px;
+  letter-spacing:5px;
   color:#b58b2a;
-  margin-bottom:5px;
 }
 
 .subtitle{
   text-align:center;
   color:#777;
-  margin-bottom:25px;
+  margin-top:5px;
+  margin-bottom:30px;
 }
 
 h2{
   text-align:center;
-  margin-bottom:25px;
   color:#222;
+  margin:10px 0 25px;
 }
 
 label{
   display:block;
-  margin-top:15px;
+  margin-top:16px;
   margin-bottom:7px;
   font-weight:600;
   color:#333;
@@ -70,12 +68,12 @@ input,
 select,
 textarea{
   width:100%;
-  padding:13px;
+  padding:14px;
   border:1px solid #ddd;
   border-radius:9px;
   font-size:15px;
   outline:none;
-  background:white;
+  background:#fff;
 }
 
 input:focus,
@@ -92,14 +90,14 @@ textarea{
 button{
   width:100%;
   padding:14px;
+  margin-top:22px;
   border:none;
   border-radius:9px;
   background:#b58b2a;
-  color:white;
+  color:#fff;
   font-size:16px;
   font-weight:bold;
   cursor:pointer;
-  margin-top:22px;
 }
 
 button:hover{
@@ -120,7 +118,7 @@ button:hover{
 
 .message{
   margin-top:18px;
-  padding:12px;
+  padding:13px;
   border-radius:8px;
   text-align:center;
   font-weight:600;
@@ -136,21 +134,17 @@ button:hover{
   color:#a52828;
 }
 
+.info{
+  background:#eef5ff;
+  color:#24558a;
+}
+
 .customer-info{
   margin-top:15px;
-  padding:14px;
+  padding:15px;
   background:#faf7f0;
   border:1px solid #e5d7b5;
   border-radius:10px;
-  line-height:1.7;
-}
-
-.purchase-card{
-  margin-top:15px;
-  padding:18px;
-  background:#faf7f0;
-  border:1px solid #e5d7b5;
-  border-radius:12px;
   line-height:1.8;
 }
 
@@ -170,10 +164,13 @@ button:hover{
   margin:10px 0;
 }
 
-.section-divider{
-  margin:35px 0;
-  border:none;
-  border-top:2px solid #eee;
+.purchase-card{
+  margin-top:15px;
+  padding:18px;
+  background:#faf7f0;
+  border:1px solid #e5d7b5;
+  border-radius:12px;
+  line-height:1.8;
 }
 
 .auto-amount{
@@ -182,16 +179,31 @@ button:hover{
   font-weight:bold;
 }
 
+.divider{
+  border:0;
+  border-top:2px solid #eee;
+  margin:40px 0;
+}
+
 .small{
+  text-align:center;
   font-size:13px;
   color:#777;
-  text-align:center;
-  margin-top:15px;
+  margin-top:10px;
 }
 
 @media(max-width:600px){
+
+  body{
+    padding:15px 10px;
+  }
+
   .card{
-    padding:20px;
+    padding:20px 16px;
+  }
+
+  .logo{
+    font-size:28px;
   }
 }
 </style>
@@ -201,29 +213,40 @@ button:hover{
 
 <div class="container">
 
-<!-- LOGIN -->
+<!-- ==================================================
+     LOGIN
+================================================== -->
 
 <div class="card" id="loginSection">
 
   <div class="logo">ANUVI</div>
-  <div class="subtitle">Couture</div>
+
+  <div class="subtitle">
+    Couture
+  </div>
 
   <h2>Admin Login</h2>
 
-  <label>Admin Email</label>
+  <label for="loginEmail">
+    Admin Email
+  </label>
 
   <input
     type="email"
     id="loginEmail"
     placeholder="Enter admin email"
+    autocomplete="username"
   >
 
-  <label>Password</label>
+  <label for="loginPassword">
+    Password
+  </label>
 
   <input
     type="password"
     id="loginPassword"
     placeholder="Enter password"
+    autocomplete="current-password"
   >
 
   <button onclick="loginAdmin()">
@@ -235,7 +258,9 @@ button:hover{
 </div>
 
 
-<!-- ADMIN DASHBOARD -->
+<!-- ==================================================
+     ADMIN DASHBOARD
+================================================== -->
 
 <div class="card hidden" id="adminSection">
 
@@ -246,11 +271,15 @@ button:hover{
   </div>
 
 
-  <!-- CREATE MEMBERSHIP -->
+  <!-- ==================================================
+       CREATE MEMBERSHIP
+  ================================================== -->
 
   <h2>Create New Membership</h2>
 
-  <label>Customer Name</label>
+  <label for="customerName">
+    Customer Name
+  </label>
 
   <input
     type="text"
@@ -258,22 +287,30 @@ button:hover{
     placeholder="Enter customer name"
   >
 
-  <label>Mobile Number</label>
+
+  <label for="customerMobile">
+    Mobile Number
+  </label>
 
   <input
     type="tel"
     id="customerMobile"
-    placeholder="Enter 10 digit mobile number"
     maxlength="10"
+    inputmode="numeric"
+    placeholder="Enter 10 digit mobile number"
   >
 
-  <label>Email</label>
+
+  <label for="customerEmail">
+    Email
+  </label>
 
   <input
     type="email"
     id="customerEmail"
     placeholder="Enter customer email"
   >
+
 
   <button onclick="createMembership()">
     Create Membership
@@ -282,27 +319,34 @@ button:hover{
   <div id="membershipMessage"></div>
 
 
-  <hr class="section-divider">
+  <hr class="divider">
 
 
-  <!-- ADD PURCHASE -->
+  <!-- ==================================================
+       ADD PURCHASE
+  ================================================== -->
 
   <h2>Add Purchase</h2>
 
-  <label>Customer Mobile Number</label>
+  <label for="purchaseMobile">
+    Customer Mobile Number
+  </label>
 
   <input
     type="tel"
     id="purchaseMobile"
-    placeholder="Enter 10 digit mobile number"
     maxlength="10"
+    inputmode="numeric"
+    placeholder="Enter 10 digit mobile number"
     onblur="findCustomer()"
   >
 
   <div id="customerInfo"></div>
 
 
-  <label>Purchase Date</label>
+  <label for="purchaseDate">
+    Purchase Date
+  </label>
 
   <input
     type="date"
@@ -310,7 +354,9 @@ button:hover{
   >
 
 
-  <label>Invoice / Bill Number</label>
+  <label for="invoiceNumber">
+    Invoice / Bill Number
+  </label>
 
   <input
     type="text"
@@ -319,7 +365,9 @@ button:hover{
   >
 
 
-  <label>Product Name</label>
+  <label for="productName">
+    Product Name
+  </label>
 
   <input
     type="text"
@@ -328,7 +376,9 @@ button:hover{
   >
 
 
-  <label>Product Category</label>
+  <label for="category">
+    Product Category
+  </label>
 
   <select id="category">
 
@@ -371,7 +421,9 @@ button:hover{
   </select>
 
 
-  <label>Quantity</label>
+  <label for="quantity">
+    Quantity
+  </label>
 
   <input
     type="number"
@@ -381,19 +433,23 @@ button:hover{
   >
 
 
-  <label>Original Price / Cost</label>
+  <label for="originalPrice">
+    Original Price / Cost
+  </label>
 
   <input
     type="number"
     id="originalPrice"
     min="0"
     step="0.01"
-    placeholder="Example: 1000"
+    placeholder="Example: 1500"
     oninput="calculateFinalAmount()"
   >
 
 
-  <label>Discount</label>
+  <label for="discount">
+    Discount
+  </label>
 
   <input
     type="number"
@@ -401,12 +457,14 @@ button:hover{
     min="0"
     step="0.01"
     value="0"
-    placeholder="Example: 100"
+    placeholder="Example: 200"
     oninput="calculateFinalAmount()"
   >
 
 
-  <label>Final Amount</label>
+  <label for="finalAmount">
+    Final Amount
+  </label>
 
   <input
     type="number"
@@ -421,7 +479,9 @@ button:hover{
   </div>
 
 
-  <label>Payment Method</label>
+  <label for="paymentMethod">
+    Payment Method
+  </label>
 
   <select id="paymentMethod">
 
@@ -444,7 +504,9 @@ button:hover{
   </select>
 
 
-  <label>Sales Person / Staff</label>
+  <label for="salesPerson">
+    Sales Person / Staff
+  </label>
 
   <input
     type="text"
@@ -453,7 +515,9 @@ button:hover{
   >
 
 
-  <label>Notes</label>
+  <label for="notes">
+    Notes
+  </label>
 
   <textarea
     id="notes"
@@ -468,20 +532,25 @@ button:hover{
   <div id="purchaseMessage"></div>
 
 
-  <hr class="section-divider">
+  <hr class="divider">
 
 
-  <!-- PURCHASE HISTORY -->
+  <!-- ==================================================
+       PURCHASE HISTORY
+  ================================================== -->
 
   <h2>Purchase History</h2>
 
-  <label>Search by Mobile Number</label>
+  <label for="historyMobile">
+    Search by Mobile Number
+  </label>
 
   <input
     type="tel"
     id="historyMobile"
-    placeholder="Enter 10 digit mobile number"
     maxlength="10"
+    inputmode="numeric"
+    placeholder="Enter 10 digit mobile number"
   >
 
   <button onclick="loadPurchaseHistory()">
@@ -491,18 +560,12 @@ button:hover{
   <div id="purchaseHistory"></div>
 
 
-  <!-- LOGOUT -->
-
   <button
     class="logout"
     onclick="logoutAdmin()"
   >
     Logout
   </button>
-
-  <div class="small">
-    Membership validity: 1 year
-  </div>
 
 </div>
 
@@ -511,15 +574,30 @@ button:hover{
 
 <script>
 
-/* ==========================================
-   SUPABASE CONNECTION
-========================================== */
+/* ==================================================
+   SUPABASE CONFIGURATION
+================================================== */
+
+/*
+  IMPORTANT:
+
+  SUPABASE_URL ko change mat karna.
+
+  SUPABASE_KEY mein apni Supabase
+  PUBLISHABLE KEY paste karna.
+
+  Service Role / Secret Key yahan MAT daalna.
+*/
 
 const SUPABASE_URL =
   "https://vwcabveqbupgomtxbank.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_ptUS0rXG84wr7A-53970aA_Y328CYJj";
+sb_publishable_ptUS0rXG84wr7A-53970aA_Y328CYJj
+
+/* ==================================================
+   SUPABASE CLIENT
+================================================== */
 
 const supabaseClient =
   window.supabase.createClient(
@@ -528,9 +606,17 @@ const supabaseClient =
   );
 
 
-/* ==========================================
+/* ==================================================
+   ADMIN EMAIL
+================================================== */
+
+const ADMIN_EMAIL =
+  "anuvioffice@gmail.com";
+
+
+/* ==================================================
    LOGIN
-========================================== */
+================================================== */
 
 async function loginAdmin(){
 
@@ -546,35 +632,71 @@ async function loginAdmin(){
       .value;
 
   const message =
-    document.getElementById("loginMessage");
+    document
+      .getElementById("loginMessage");
 
   message.innerHTML = "";
 
+
   if(!email || !password){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      'Please enter email and password.' +
-      '</div>';
+    showError(
+      message,
+      "Please enter email and password."
+    );
 
     return;
   }
 
-  const { error } =
+
+  if(email.toLowerCase() !== ADMIN_EMAIL){
+
+    showError(
+      message,
+      "This email is not authorized for admin access."
+    );
+
+    return;
+  }
+
+
+  const { data, error } =
     await supabaseClient.auth.signInWithPassword({
+
       email:email,
+
       password:password
+
     });
+
 
   if(error){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      escapeHtml(error.message) +
-      '</div>';
+    showError(
+      message,
+      error.message
+    );
 
     return;
   }
+
+
+  if(
+    !data ||
+    !data.user ||
+    data.user.email.toLowerCase() !== ADMIN_EMAIL
+  ){
+
+    await supabaseClient.auth.signOut();
+
+    showError(
+      message,
+      "Admin access denied."
+    );
+
+    return;
+  }
+
 
   document
     .getElementById("loginSection")
@@ -588,9 +710,9 @@ async function loginAdmin(){
 }
 
 
-/* ==========================================
+/* ==================================================
    CREATE MEMBERSHIP
-========================================== */
+================================================== */
 
 async function createMembership(){
 
@@ -613,17 +735,18 @@ async function createMembership(){
       .trim();
 
   const message =
-    document.getElementById("membershipMessage");
+    document
+      .getElementById("membershipMessage");
 
   message.innerHTML = "";
 
 
   if(!name){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      'Please enter customer name.' +
-      '</div>';
+    showError(
+      message,
+      "Please enter customer name."
+    );
 
     return;
   }
@@ -631,10 +754,10 @@ async function createMembership(){
 
   if(!/^[0-9]{10}$/.test(mobile)){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      'Please enter a valid 10 digit mobile number.' +
-      '</div>';
+    showError(
+      message,
+      "Please enter a valid 10 digit mobile number."
+    );
 
     return;
   }
@@ -642,10 +765,10 @@ async function createMembership(){
 
   if(!email){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      'Please enter customer email.' +
-      '</div>';
+    showError(
+      message,
+      "Please enter customer email."
+    );
 
     return;
   }
@@ -660,16 +783,16 @@ async function createMembership(){
     await supabaseClient
       .from("Customers")
       .select("Membership_id")
-      .eq("Contact Number",mobile)
+      .eq("Contact Number", mobile)
       .maybeSingle();
 
 
   if(existingError){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      escapeHtml(existingError.message) +
-      '</div>';
+    showError(
+      message,
+      existingError.message
+    );
 
     return;
   }
@@ -677,17 +800,17 @@ async function createMembership(){
 
   if(existingCustomer){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      'This mobile number already has membership: ' +
-      escapeHtml(existingCustomer.Membership_id) +
-      '</div>';
+    showError(
+      message,
+      "This mobile number already has membership: " +
+      existingCustomer.Membership_id
+    );
 
     return;
   }
 
 
-  /* Get latest membership */
+  /* Get latest Membership ID */
 
   const {
     data:customers,
@@ -696,16 +819,18 @@ async function createMembership(){
     await supabaseClient
       .from("Customers")
       .select("Membership_id")
-      .order("Membership_id",{ascending:false})
+      .order("Membership_id", {
+        ascending:false
+      })
       .limit(1);
 
 
   if(fetchError){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      escapeHtml(fetchError.message) +
-      '</div>';
+    showError(
+      message,
+      fetchError.message
+    );
 
     return;
   }
@@ -713,19 +838,20 @@ async function createMembership(){
 
   let nextNumber = 1;
 
+
   if(customers && customers.length > 0){
 
     const lastId =
       customers[0].Membership_id;
 
-    const numberPart =
+    const number =
       parseInt(
-        lastId.replace("ANUVI",""),
+        String(lastId).replace("ANUVI",""),
         10
       );
 
-    if(!isNaN(numberPart)){
-      nextNumber = numberPart + 1;
+    if(!isNaN(number)){
+      nextNumber = number + 1;
     }
   }
 
@@ -735,23 +861,25 @@ async function createMembership(){
     String(nextNumber).padStart(3,"0");
 
 
-  const today = new Date();
+  const today =
+    new Date();
 
-  const validTill = new Date();
+  const validTill =
+    new Date();
 
   validTill.setFullYear(
     validTill.getFullYear() + 1
   );
 
 
-  const membershipDateString =
-    today.toISOString().split("T")[0];
+  const membershipDate =
+    getLocalDate(today);
 
-  const validTillString =
-    validTill.toISOString().split("T")[0];
+  const validTillDate =
+    getLocalDate(validTill);
 
 
-  /* Insert customer */
+  /* Insert */
 
   const { error:insertError } =
     await supabaseClient
@@ -771,7 +899,7 @@ async function createMembership(){
           email,
 
         Membership_date:
-          membershipDateString,
+          membershipDate,
 
         Membership_status:
           "Active"
@@ -781,10 +909,10 @@ async function createMembership(){
 
   if(insertError){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      escapeHtml(insertError.message) +
-      '</div>';
+    showError(
+      message,
+      insertError.message
+    );
 
     return;
   }
@@ -794,42 +922,50 @@ async function createMembership(){
 
     '<div class="message success">' +
 
-    'Membership created successfully!' +
+      'Membership created successfully!' +
 
-    '<div class="membership-result">' +
+      '<div class="membership-result">' +
 
-    '<div>Membership ID</div>' +
+        '<div>Membership ID</div>' +
 
-    '<div class="membership-id">' +
-    escapeHtml(membershipId) +
-    '</div>' +
+        '<div class="membership-id">' +
+          escapeHtml(membershipId) +
+        '</div>' +
 
-    '<div><strong>Customer:</strong> ' +
-    escapeHtml(name) +
-    '</div>' +
+        '<div><strong>Customer:</strong> ' +
+          escapeHtml(name) +
+        '</div>' +
 
-    '<div><strong>Mobile:</strong> ' +
-    escapeHtml(mobile) +
-    '</div>' +
+        '<div><strong>Mobile:</strong> ' +
+          escapeHtml(mobile) +
+        '</div>' +
 
-    '<div><strong>Valid Till:</strong> ' +
-    formatDate(validTillString) +
-    '</div>' +
+        '<div><strong>Valid Till:</strong> ' +
+          formatDate(validTillDate) +
+        '</div>' +
 
-    '</div>' +
+      '</div>' +
 
     '</div>';
 
 
-  document.getElementById("customerName").value="";
-  document.getElementById("customerMobile").value="";
-  document.getElementById("customerEmail").value="";
+  document
+    .getElementById("customerName")
+    .value = "";
+
+  document
+    .getElementById("customerMobile")
+    .value = "";
+
+  document
+    .getElementById("customerEmail")
+    .value = "";
 }
 
 
-/* ==========================================
+/* ==================================================
    FIND CUSTOMER BY MOBILE
-========================================== */
+================================================== */
 
 async function findCustomer(){
 
@@ -840,20 +976,23 @@ async function findCustomer(){
       .trim();
 
   const info =
-    document.getElementById("customerInfo");
+    document
+      .getElementById("customerInfo");
 
   info.innerHTML = "";
+
 
   if(!mobile){
     return;
   }
 
+
   if(!/^[0-9]{10}$/.test(mobile)){
 
-    info.innerHTML =
-      '<div class="message error">' +
-      'Please enter a valid 10 digit mobile number.' +
-      '</div>';
+    showError(
+      info,
+      "Please enter a valid 10 digit mobile number."
+    );
 
     return;
   }
@@ -865,17 +1004,19 @@ async function findCustomer(){
   } =
     await supabaseClient
       .from("Customers")
-      .select("Membership_id, Customer_name")
-      .eq("Contact Number",mobile)
+      .select(
+        "Membership_id, Customer_name"
+      )
+      .eq("Contact Number", mobile)
       .maybeSingle();
 
 
   if(error){
 
-    info.innerHTML =
-      '<div class="message error">' +
-      escapeHtml(error.message) +
-      '</div>';
+    showError(
+      info,
+      error.message
+    );
 
     return;
   }
@@ -883,10 +1024,10 @@ async function findCustomer(){
 
   if(!data){
 
-    info.innerHTML =
-      '<div class="message error">' +
-      'Customer not found. Please check mobile number.' +
-      '</div>';
+    showError(
+      info,
+      "Customer not found. Please check mobile number."
+    );
 
     return;
   }
@@ -896,30 +1037,31 @@ async function findCustomer(){
 
     '<div class="customer-info">' +
 
-    '<strong>Customer:</strong> ' +
-    escapeHtml(data.Customer_name) +
+      '<strong>Customer:</strong> ' +
+      escapeHtml(data.Customer_name) +
 
-    '<br>' +
+      '<br>' +
 
-    '<strong>Membership ID:</strong> ' +
-    escapeHtml(data.Membership_id) +
+      '<strong>Membership ID:</strong> ' +
+      escapeHtml(data.Membership_id) +
 
     '</div>';
 }
 
 
-/* ==========================================
-   AUTO CALCULATE FINAL AMOUNT
-========================================== */
+/* ==================================================
+   AUTO FINAL AMOUNT
+================================================== */
 
 function calculateFinalAmount(){
 
-  const original =
+  const originalPrice =
     parseFloat(
       document
         .getElementById("originalPrice")
         .value
     ) || 0;
+
 
   const discount =
     parseFloat(
@@ -928,12 +1070,15 @@ function calculateFinalAmount(){
         .value
     ) || 0;
 
+
   let finalAmount =
-    original - discount;
+    originalPrice - discount;
+
 
   if(finalAmount < 0){
     finalAmount = 0;
   }
+
 
   document
     .getElementById("finalAmount")
@@ -942,9 +1087,9 @@ function calculateFinalAmount(){
 }
 
 
-/* ==========================================
+/* ==================================================
    ADD PURCHASE
-========================================== */
+================================================== */
 
 async function addPurchase(){
 
@@ -1032,10 +1177,10 @@ async function addPurchase(){
 
   if(!/^[0-9]{10}$/.test(mobile)){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      'Please enter a valid 10 digit mobile number.' +
-      '</div>';
+    showError(
+      message,
+      "Please enter a valid 10 digit mobile number."
+    );
 
     return;
   }
@@ -1043,10 +1188,10 @@ async function addPurchase(){
 
   if(!purchaseDate){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      'Please select purchase date.' +
-      '</div>';
+    showError(
+      message,
+      "Please select purchase date."
+    );
 
     return;
   }
@@ -1054,10 +1199,10 @@ async function addPurchase(){
 
   if(!productName){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      'Please enter product name.' +
-      '</div>';
+    showError(
+      message,
+      "Please enter product name."
+    );
 
     return;
   }
@@ -1065,21 +1210,32 @@ async function addPurchase(){
 
   if(quantity < 1){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      'Quantity must be at least 1.' +
-      '</div>';
+    showError(
+      message,
+      "Quantity must be at least 1."
+    );
 
     return;
   }
 
 
-  if(originalPrice < 0 || discount < 0){
+  if(originalPrice < 0){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      'Price and discount cannot be negative.' +
-      '</div>';
+    showError(
+      message,
+      "Original Price cannot be negative."
+    );
+
+    return;
+  }
+
+
+  if(discount < 0){
+
+    showError(
+      message,
+      "Discount cannot be negative."
+    );
 
     return;
   }
@@ -1087,10 +1243,10 @@ async function addPurchase(){
 
   if(discount > originalPrice){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      'Discount cannot be greater than Original Price.' +
-      '</div>';
+    showError(
+      message,
+      "Discount cannot be greater than Original Price."
+    );
 
     return;
   }
@@ -1104,17 +1260,19 @@ async function addPurchase(){
   } =
     await supabaseClient
       .from("Customers")
-      .select("Membership_id, Customer_name")
-      .eq("Contact Number",mobile)
+      .select(
+        "Membership_id, Customer_name"
+      )
+      .eq("Contact Number", mobile)
       .maybeSingle();
 
 
   if(customerError){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      escapeHtml(customerError.message) +
-      '</div>';
+    showError(
+      message,
+      customerError.message
+    );
 
     return;
   }
@@ -1122,16 +1280,16 @@ async function addPurchase(){
 
   if(!customer){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      'Customer not found. Please check mobile number.' +
-      '</div>';
+    showError(
+      message,
+      "Customer not found. Please check mobile number."
+    );
 
     return;
   }
 
 
-  /* Insert purchase */
+  /* Insert Purchase */
 
   const { error } =
     await supabaseClient
@@ -1179,45 +1337,36 @@ async function addPurchase(){
 
   if(error){
 
-    message.innerHTML =
-      '<div class="message error">' +
-      escapeHtml(error.message) +
-      '</div>';
+    showError(
+      message,
+      error.message
+    );
 
     return;
   }
 
 
   message.innerHTML =
+
     '<div class="message success">' +
-    'Purchase added successfully! ✓' +
-    '<br>Final Amount: ₹' +
-    finalAmount.toFixed(2) +
+
+      'Purchase added successfully ✓' +
+
+      '<br>' +
+
+      'Final Amount: ₹' +
+      finalAmount.toFixed(2) +
+
     '</div>';
 
 
-  /* Clear form */
-
-  document.getElementById("purchaseMobile").value="";
-  document.getElementById("customerInfo").innerHTML="";
-  document.getElementById("invoiceNumber").value="";
-  document.getElementById("productName").value="";
-  document.getElementById("category").value="";
-  document.getElementById("quantity").value="1";
-  document.getElementById("originalPrice").value="";
-  document.getElementById("discount").value="0";
-  document.getElementById("finalAmount").value="";
-  document.getElementById("paymentMethod").value="Cash";
-  document.getElementById("salesPerson").value="";
-  document.getElementById("notes").value="";
-
-  setTodayDate();
+  clearPurchaseForm();
 }
 
 
-/* ==========================================
+/* ==================================================
    PURCHASE HISTORY
-========================================== */
+================================================== */
 
 async function loadPurchaseHistory(){
 
@@ -1236,16 +1385,16 @@ async function loadPurchaseHistory(){
 
   if(!/^[0-9]{10}$/.test(mobile)){
 
-    history.innerHTML =
-      '<div class="message error">' +
-      'Please enter a valid 10 digit mobile number.' +
-      '</div>';
+    showError(
+      history,
+      "Please enter a valid 10 digit mobile number."
+    );
 
     return;
   }
 
 
-  /* Find customer */
+  /* Find Customer */
 
   const {
     data:customer,
@@ -1253,17 +1402,19 @@ async function loadPurchaseHistory(){
   } =
     await supabaseClient
       .from("Customers")
-      .select("Membership_id, Customer_name")
-      .eq("Contact Number",mobile)
+      .select(
+        "Membership_id, Customer_name"
+      )
+      .eq("Contact Number", mobile)
       .maybeSingle();
 
 
   if(customerError){
 
-    history.innerHTML =
-      '<div class="message error">' +
-      escapeHtml(customerError.message) +
-      '</div>';
+    showError(
+      history,
+      customerError.message
+    );
 
     return;
   }
@@ -1271,10 +1422,10 @@ async function loadPurchaseHistory(){
 
   if(!customer){
 
-    history.innerHTML =
-      '<div class="message error">' +
-      'Customer not found. Please check mobile number.' +
-      '</div>';
+    showError(
+      history,
+      "Customer not found."
+    );
 
     return;
   }
@@ -1283,7 +1434,7 @@ async function loadPurchaseHistory(){
   /* Get purchases */
 
   const {
-    data,
+    data:purchases,
     error
   } =
     await supabaseClient
@@ -1295,16 +1446,18 @@ async function loadPurchaseHistory(){
       )
       .order(
         "Purchase_date",
-        {ascending:false}
+        {
+          ascending:false
+        }
       );
 
 
   if(error){
 
-    history.innerHTML =
-      '<div class="message error">' +
-      escapeHtml(error.message) +
-      '</div>';
+    showError(
+      history,
+      error.message
+    );
 
     return;
   }
@@ -1314,21 +1467,22 @@ async function loadPurchaseHistory(){
 
     '<div class="customer-info">' +
 
-    '<strong>Customer:</strong> ' +
-    escapeHtml(customer.Customer_name) +
+      '<strong>Customer:</strong> ' +
+      escapeHtml(customer.Customer_name) +
 
-    '<br>' +
+      '<br>' +
 
-    '<strong>Membership ID:</strong> ' +
-    escapeHtml(customer.Membership_id) +
+      '<strong>Membership ID:</strong> ' +
+      escapeHtml(customer.Membership_id) +
 
     '</div>';
 
 
-  if(!data || data.length === 0){
+  if(!purchases || purchases.length === 0){
 
     html +=
-      '<div class="message error">' +
+
+      '<div class="message info">' +
       'No purchase history found.' +
       '</div>';
 
@@ -1338,84 +1492,84 @@ async function loadPurchaseHistory(){
   }
 
 
-  /* Purchase cards */
-
-  data.forEach(function(purchase){
+  purchases.forEach(function(purchase){
 
     html +=
 
       '<div class="purchase-card">' +
 
-      '<strong>Date:</strong> ' +
-      formatDate(purchase.Purchase_date) +
+        '<strong>Date:</strong> ' +
+        formatDate(
+          purchase.Purchase_date
+        ) +
 
-      '<br>' +
+        '<br>' +
 
-      '<strong>Product:</strong> ' +
-      escapeHtml(
-        purchase.Product_name || "-"
-      ) +
+        '<strong>Product:</strong> ' +
+        escapeHtml(
+          purchase.Product_name || "-"
+        ) +
 
-      '<br>' +
+        '<br>' +
 
-      '<strong>Category:</strong> ' +
-      escapeHtml(
-        purchase.Category || "-"
-      ) +
+        '<strong>Category:</strong> ' +
+        escapeHtml(
+          purchase.Category || "-"
+        ) +
 
-      '<br>' +
+        '<br>' +
 
-      '<strong>Quantity:</strong> ' +
-      (purchase.Quantity || 0) +
+        '<strong>Quantity:</strong> ' +
+        (purchase.Quantity || 0) +
 
-      '<br>' +
+        '<br>' +
 
-      '<strong>Original Price / Cost:</strong> ₹' +
-      Number(
-        purchase.Original_price || 0
-      ).toFixed(2) +
+        '<strong>Original Price / Cost:</strong> ₹' +
+        Number(
+          purchase.Original_price || 0
+        ).toFixed(2) +
 
-      '<br>' +
+        '<br>' +
 
-      '<strong>Discount:</strong> ₹' +
-      Number(
-        purchase.Discount || 0
-      ).toFixed(2) +
+        '<strong>Discount:</strong> ₹' +
+        Number(
+          purchase.Discount || 0
+        ).toFixed(2) +
 
-      '<br>' +
+        '<br>' +
 
-      '<strong>Final Amount:</strong> ₹' +
-      Number(
-        purchase.Amount || 0
-      ).toFixed(2) +
+        '<strong>Final Amount:</strong> ₹' +
+        Number(
+          purchase.Amount || 0
+        ).toFixed(2) +
 
-      '<br>' +
+        '<br>' +
 
-      '<strong>Payment:</strong> ' +
-      escapeHtml(
-        purchase.Payment_method || "-"
-      ) +
+        '<strong>Payment:</strong> ' +
+        escapeHtml(
+          purchase.Payment_method || "-"
+        ) +
 
-      '<br>' +
+        '<br>' +
 
-      '<strong>Invoice:</strong> ' +
-      escapeHtml(
-        purchase.Invoice_number || "-"
-      ) +
+        '<strong>Invoice:</strong> ' +
+        escapeHtml(
+          purchase.Invoice_number || "-"
+        ) +
 
-      '<br>' +
+        '<br>' +
 
-      '<strong>Sales Person:</strong> ' +
-      escapeHtml(
-        purchase.Sales_person || "-"
-      ) +
+        '<strong>Sales Person:</strong> ' +
+        escapeHtml(
+          purchase.Sales_person || "-"
+        ) +
 
-      '<br>' +
+        '<br>' +
 
-      '<strong>Notes:</strong> ' +
-      escapeHtml(
-        purchase.Notes || "-"
-      ) +
+        '<strong>Notes:</strong> ' +
+        escapeHtml(
+          purchase.Notes || "-"
+        ) +
 
       '</div>';
 
@@ -1426,9 +1580,67 @@ async function loadPurchaseHistory(){
 }
 
 
-/* ==========================================
+/* ==================================================
+   CLEAR PURCHASE FORM
+================================================== */
+
+function clearPurchaseForm(){
+
+  document
+    .getElementById("purchaseMobile")
+    .value = "";
+
+  document
+    .getElementById("customerInfo")
+    .innerHTML = "";
+
+  document
+    .getElementById("invoiceNumber")
+    .value = "";
+
+  document
+    .getElementById("productName")
+    .value = "";
+
+  document
+    .getElementById("category")
+    .value = "";
+
+  document
+    .getElementById("quantity")
+    .value = "1";
+
+  document
+    .getElementById("originalPrice")
+    .value = "";
+
+  document
+    .getElementById("discount")
+    .value = "0";
+
+  document
+    .getElementById("finalAmount")
+    .value = "";
+
+  document
+    .getElementById("paymentMethod")
+    .value = "Cash";
+
+  document
+    .getElementById("salesPerson")
+    .value = "";
+
+  document
+    .getElementById("notes")
+    .value = "";
+
+  setTodayDate();
+}
+
+
+/* ==================================================
    LOGOUT
-========================================== */
+================================================== */
 
 async function logoutAdmin(){
 
@@ -1441,19 +1653,38 @@ async function logoutAdmin(){
   document
     .getElementById("loginSection")
     .classList.remove("hidden");
+
+  document
+    .getElementById("loginPassword")
+    .value = "";
 }
 
 
-/* ==========================================
-   CHECK EXISTING LOGIN
-========================================== */
+/* ==================================================
+   CHECK EXISTING SESSION
+================================================== */
 
 async function checkLogin(){
 
-  const {data} =
+  const {
+    data,
+    error
+  } =
     await supabaseClient.auth.getSession();
 
-  if(data.session){
+
+  if(error){
+    return;
+  }
+
+
+  if(
+    data &&
+    data.session &&
+    data.session.user &&
+    data.session.user.email &&
+    data.session.user.email.toLowerCase() === ADMIN_EMAIL
+  ){
 
     document
       .getElementById("loginSection")
@@ -1464,13 +1695,67 @@ async function checkLogin(){
       .classList.remove("hidden");
 
     setTodayDate();
+
+  }else{
+
+    if(data && data.session){
+
+      await supabaseClient.auth.signOut();
+
+    }
+
   }
 }
 
 
-/* ==========================================
-   FORMAT DATE
-========================================== */
+/* ==================================================
+   TODAY DATE
+================================================== */
+
+function setTodayDate(){
+
+  const today =
+    new Date();
+
+  document
+    .getElementById("purchaseDate")
+    .value =
+      getLocalDate(today);
+}
+
+
+/* ==================================================
+   LOCAL DATE
+================================================== */
+
+function getLocalDate(date){
+
+  const year =
+    date.getFullYear();
+
+  const month =
+    String(
+      date.getMonth() + 1
+    ).padStart(2,"0");
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(2,"0");
+
+  return (
+    year +
+    "-" +
+    month +
+    "-" +
+    day
+  );
+}
+
+
+/* ==================================================
+   DATE DISPLAY
+================================================== */
 
 function formatDate(dateString){
 
@@ -1479,23 +1764,11 @@ function formatDate(dateString){
   }
 
   const parts =
-    dateString.split("-");
+    String(dateString).split("-");
 
   if(parts.length !== 3){
     return dateString;
   }
-
-  return (
-    parts[2] +
-    " " +
-    getMonthName(parts[1]) +
-    " " +
-    parts[0]
-  );
-}
-
-
-function getMonthName(month){
 
   const months = [
     "Jan",
@@ -1512,19 +1785,29 @@ function getMonthName(month){
     "Dec"
   ];
 
-  return months[
-    parseInt(month,10)-1
-  ] || month;
+  const monthIndex =
+    parseInt(parts[1],10) - 1;
+
+  return (
+    parts[2] +
+    " " +
+    (months[monthIndex] || parts[1]) +
+    " " +
+    parts[0]
+  );
 }
 
 
-/* ==========================================
-   SECURITY / DISPLAY HELPER
-========================================== */
+/* ==================================================
+   ESCAPE HTML
+================================================== */
 
 function escapeHtml(value){
 
-  if(value === null || value === undefined){
+  if(
+    value === null ||
+    value === undefined
+  ){
     return "";
   }
 
@@ -1537,56 +1820,24 @@ function escapeHtml(value){
 }
 
 
-/* ==========================================
-   SET TODAY AS DEFAULT PURCHASE DATE
-========================================== */
+/* ==================================================
+   ERROR MESSAGE
+================================================== */
 
-function setTodayDate(){
+function showError(element,message){
 
-  const today =
-    new Date();
-
-  const year =
-    today.getFullYear();
-
-  const month =
-    String(
-      today.getMonth()+1
-    ).padStart(2,"0");
-
-  const day =
-    String(
-      today.getDate()
-    ).padStart(2,"0");
-
-  document
-    .getElementById("purchaseDate")
-    .value =
-      year + "-" +
-      month + "-" +
-      day;
+  element.innerHTML =
+    '<div class="message error">' +
+    escapeHtml(message) +
+    '</div>';
 }
 
 
-/* ==========================================
-   RUN
-========================================== */
+/* ==================================================
+   START
+================================================== */
 
 checkLogin();
-
-setTimeout(function(){
-
-  if(
-    !document
-      .getElementById("purchaseDate")
-      .value
-  ){
-
-    setTodayDate();
-
-  }
-
-},100);
 
 </script>
 
