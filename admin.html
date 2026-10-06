@@ -1,603 +1,875 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ANUVI Admin Panel</title>
 
-<title>ANUVI Couture - Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-<style>
-*{
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
-}
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7f5f1;
+      color: #222;
+    }
 
-body{
-  margin:0;
-  min-height:100vh;
-  background:#f7f3ed;
-  padding:30px 15px;
-}
+    .container {
+      max-width: 1400px;
+      margin: auto;
+      padding: 25px;
+    }
 
-.container{
-  width:100%;
-  max-width:850px;
-  margin:auto;
-}
+    h1, h2, h3 {
+      margin-top: 0;
+    }
 
-.card{
-  background:#fff;
-  border-radius:18px;
-  padding:30px;
-  box-shadow:0 10px 35px rgba(0,0,0,.08);
-  margin-bottom:20px;
-}
+    .logo {
+      text-align: center;
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: #b8860b;
+      margin-bottom: 5px;
+    }
 
-.logo{
-  text-align:center;
-  font-size:32px;
-  font-weight:bold;
-  letter-spacing:5px;
-  color:#b58b2a;
-}
+    .subtitle {
+      text-align: center;
+      color: #777;
+      margin-bottom: 25px;
+    }
 
-.subtitle{
-  text-align:center;
-  color:#777;
-  margin-top:5px;
-  margin-bottom:30px;
-}
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+    }
 
-h2{
-  text-align:center;
-  color:#222;
-  margin:10px 0 25px;
-}
+    .login-box {
+      max-width: 450px;
+      margin: 70px auto;
+    }
 
-label{
-  display:block;
-  margin-top:16px;
-  margin-bottom:7px;
-  font-weight:600;
-  color:#333;
-}
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
 
-input,
-select,
-textarea{
-  width:100%;
-  padding:14px;
-  border:1px solid #ddd;
-  border-radius:9px;
-  font-size:15px;
-  outline:none;
-  background:#fff;
-}
+    .full {
+      grid-column: 1 / -1;
+    }
 
-input:focus,
-select:focus,
-textarea:focus{
-  border-color:#b58b2a;
-}
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
 
-textarea{
-  min-height:90px;
-  resize:vertical;
-}
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+    }
 
-button{
-  width:100%;
-  padding:14px;
-  margin-top:22px;
-  border:none;
-  border-radius:9px;
-  background:#b58b2a;
-  color:#fff;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
-}
+    input:focus, select:focus, textarea:focus {
+      border-color: #b8860b;
+    }
 
-button:hover{
-  background:#96721f;
-}
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
 
-.logout{
-  background:#333;
-}
+    button {
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+    }
 
-.logout:hover{
-  background:#111;
-}
+    .btn-primary {
+      background: #b8860b;
+      color: white;
+    }
 
-.hidden{
-  display:none;
-}
+    .btn-dark {
+      background: #222;
+      color: white;
+    }
 
-.message{
-  margin-top:18px;
-  padding:13px;
-  border-radius:8px;
-  text-align:center;
-  font-weight:600;
-}
+    .btn-light {
+      background: #eee;
+      color: #222;
+    }
 
-.success{
-  background:#e8f7ed;
-  color:#23733d;
-}
+    .btn-danger {
+      background: #b33a3a;
+      color: white;
+    }
 
-.error{
-  background:#fdecec;
-  color:#a52828;
-}
+    button:hover {
+      opacity: 0.9;
+    }
 
-.info{
-  background:#eef5ff;
-  color:#24558a;
-}
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
 
-.customer-info{
-  margin-top:15px;
-  padding:15px;
-  background:#faf7f0;
-  border:1px solid #e5d7b5;
-  border-radius:10px;
-  line-height:1.8;
-}
+    .hidden {
+      display: none !important;
+    }
 
-.membership-result{
-  margin-top:15px;
-  padding:20px;
-  background:#faf7f0;
-  border:1px solid #e5d7b5;
-  border-radius:12px;
-  text-align:center;
-}
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+      font-size: 14px;
+    }
 
-.membership-id{
-  font-size:28px;
-  font-weight:bold;
-  color:#b58b2a;
-  margin:10px 0;
-}
+    .success {
+      background: #e8f7ed;
+      color: #176b35;
+    }
 
-.purchase-card{
-  margin-top:15px;
-  padding:18px;
-  background:#faf7f0;
-  border:1px solid #e5d7b5;
-  border-radius:12px;
-  line-height:1.8;
-}
+    .error {
+      background: #fdeaea;
+      color: #a12525;
+    }
 
-.auto-amount{
-  background:#faf7f0;
-  border:2px solid #b58b2a;
-  font-weight:bold;
-}
+    .info {
+      background: #eef4ff;
+      color: #275aa8;
+    }
 
-.divider{
-  border:0;
-  border-top:2px solid #eee;
-  margin:40px 0;
-}
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
 
-.small{
-  text-align:center;
-  font-size:13px;
-  color:#777;
-  margin-top:10px;
-}
+    .stat {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+    }
 
-@media(max-width:600px){
+    .stat-title {
+      color: #777;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
 
-  body{
-    padding:15px 10px;
-  }
+    .stat-value {
+      font-size: 25px;
+      font-weight: 700;
+      color: #b8860b;
+    }
 
-  .card{
-    padding:20px 16px;
-  }
+    .table-wrapper {
+      overflow-x: auto;
+      border: 1px solid #eee;
+      border-radius: 10px;
+    }
 
-  .logo{
-    font-size:28px;
-  }
-}
-</style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1450px;
+      background: white;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    th {
+      background: #f5f1e8;
+      color: #444;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tr:hover td {
+      background: #fffaf0;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    .amount {
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .form-grid,
+      .filter-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+    }
+
+    @media (max-width: 550px) {
+      .container {
+        padding: 12px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="container">
 
-<!-- ==================================================
-     LOGIN
-================================================== -->
+  <!-- ================= LOGIN ================= -->
 
-<div class="card" id="loginSection">
+  <div id="loginSection" class="login-box card">
 
-  <div class="logo">ANUVI</div>
+    <div class="logo">ANUVI</div>
+    <div class="subtitle">Admin Panel</div>
 
-  <div class="subtitle">
-    Couture
-  </div>
+    <h2>Admin Login</h2>
 
-  <h2>Admin Login</h2>
+    <form id="loginForm">
 
-  <label for="loginEmail">
-    Admin Email
-  </label>
+      <div style="margin-bottom:15px;">
+        <label>Email</label>
+        <input
+          type="email"
+          id="loginEmail"
+          value="anuvioffice@gmail.com"
+          required
+        />
+      </div>
 
-  <input
-    type="email"
-    id="loginEmail"
-    placeholder="Enter admin email"
-    autocomplete="username"
-  >
+      <div style="margin-bottom:15px;">
+        <label>Password</label>
+        <input
+          type="password"
+          id="loginPassword"
+          required
+        />
+      </div>
 
-  <label for="loginPassword">
-    Password
-  </label>
+      <button class="btn-primary" type="submit">
+        Login
+      </button>
 
-  <input
-    type="password"
-    id="loginPassword"
-    placeholder="Enter password"
-    autocomplete="current-password"
-  >
+      <div id="loginMessage"></div>
 
-  <button onclick="loginAdmin()">
-    Login
-  </button>
-
-  <div id="loginMessage"></div>
-
-</div>
-
-
-<!-- ==================================================
-     ADMIN DASHBOARD
-================================================== -->
-
-<div class="card hidden" id="adminSection">
-
-  <div class="logo">ANUVI</div>
-
-  <div class="subtitle">
-    Couture Admin Panel
+    </form>
   </div>
 
 
-  <!-- ==================================================
-       CREATE MEMBERSHIP
-  ================================================== -->
+  <!-- ================= ADMIN PANEL ================= -->
 
-  <h2>Create New Membership</h2>
+  <div id="adminSection" class="hidden">
 
-  <label for="customerName">
-    Customer Name
-  </label>
+    <div class="topbar">
 
-  <input
-    type="text"
-    id="customerName"
-    placeholder="Enter customer name"
-  >
+      <div>
+        <div class="logo" style="text-align:left;">
+          ANUVI
+        </div>
 
+        <div style="color:#777;">
+          Membership & Purchase Management
+        </div>
+      </div>
 
-  <label for="customerMobile">
-    Mobile Number
-  </label>
+      <button
+        class="btn-danger"
+        id="logoutBtn"
+      >
+        Logout
+      </button>
 
-  <input
-    type="tel"
-    id="customerMobile"
-    maxlength="10"
-    inputmode="numeric"
-    placeholder="Enter 10 digit mobile number"
-  >
+    </div>
 
 
-  <label for="customerEmail">
-    Email
-  </label>
+    <!-- ================= CREATE MEMBERSHIP ================= -->
 
-  <input
-    type="email"
-    id="customerEmail"
-    placeholder="Enter customer email"
-  >
+    <div class="card">
 
+      <div class="section-title">
+        <h2>Create New Membership</h2>
+      </div>
 
-  <button onclick="createMembership()">
-    Create Membership
-  </button>
+      <form id="membershipForm">
 
-  <div id="membershipMessage"></div>
+        <div class="form-grid">
 
+          <div>
+            <label>Customer Name *</label>
+            <input
+              type="text"
+              id="customerName"
+              required
+            />
+          </div>
 
-  <hr class="divider">
+          <div>
+            <label>Mobile Number *</label>
+            <input
+              type="tel"
+              id="customerMobile"
+              maxlength="10"
+              required
+            />
+          </div>
 
+          <div>
+            <label>Email</label>
+            <input
+              type="email"
+              id="customerEmail"
+            />
+          </div>
 
-  <!-- ==================================================
-       ADD PURCHASE
-  ================================================== -->
+          <div>
+            <label>Membership Date</label>
+            <input
+              type="date"
+              id="membershipDate"
+            />
+          </div>
 
-  <h2>Add Purchase</h2>
+        </div>
 
-  <label for="purchaseMobile">
-    Customer Mobile Number
-  </label>
+        <div class="actions">
+          <button
+            type="submit"
+            class="btn-primary"
+          >
+            Create Membership
+          </button>
+        </div>
 
-  <input
-    type="tel"
-    id="purchaseMobile"
-    maxlength="10"
-    inputmode="numeric"
-    placeholder="Enter 10 digit mobile number"
-    onblur="findCustomer()"
-  >
+        <div id="membershipMessage"></div>
 
-  <div id="customerInfo"></div>
+      </form>
 
-
-  <label for="purchaseDate">
-    Purchase Date
-  </label>
-
-  <input
-    type="date"
-    id="purchaseDate"
-  >
-
-
-  <label for="invoiceNumber">
-    Invoice / Bill Number
-  </label>
-
-  <input
-    type="text"
-    id="invoiceNumber"
-    placeholder="Example: INV001"
-  >
-
-
-  <label for="productName">
-    Product Name
-  </label>
-
-  <input
-    type="text"
-    id="productName"
-    placeholder="Example: Floral Dress"
-  >
+    </div>
 
 
-  <label for="category">
-    Product Category
-  </label>
+    <!-- ================= ADD PURCHASE ================= -->
 
-  <select id="category">
+    <div class="card">
 
-    <option value="">
-      Select Category
-    </option>
+      <div class="section-title">
+        <h2>Add Purchase</h2>
+      </div>
 
-    <option value="Dress">
-      Dress
-    </option>
+      <form id="purchaseForm">
 
-    <option value="Kurti">
-      Kurti
-    </option>
+        <div class="form-grid">
 
-    <option value="Co-ord Set">
-      Co-ord Set
-    </option>
+          <div>
+            <label>Customer Mobile Number *</label>
+            <input
+              type="tel"
+              id="purchaseMobile"
+              maxlength="10"
+              required
+            />
+          </div>
 
-    <option value="Top">
-      Top
-    </option>
+          <div>
+            <label>Purchase Date *</label>
+            <input
+              type="date"
+              id="purchaseDate"
+              required
+            />
+          </div>
 
-    <option value="Skirt">
-      Skirt
-    </option>
+          <div>
+            <label>Invoice / Bill Number</label>
+            <input
+              type="text"
+              id="invoiceNumber"
+              placeholder="INV-001"
+            />
+          </div>
 
-    <option value="Jewellery">
-      Jewellery
-    </option>
+          <div>
+            <label>Product Name *</label>
+            <input
+              type="text"
+              id="productName"
+              required
+            />
+          </div>
 
-    <option value="Accessories">
-      Accessories
-    </option>
+          <div>
+            <label>Category</label>
+            <select id="category">
+              <option value="">Select Category</option>
+              <option value="Dress">Dress</option>
+              <option value="Co-ord Set">Co-ord Set</option>
+              <option value="Kurti">Kurti</option>
+              <option value="Top">Top</option>
+              <option value="Skirt">Skirt</option>
+              <option value="Jewellery">Jewellery</option>
+              <option value="Accessories">Accessories</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
 
-    <option value="Other">
-      Other
-    </option>
+          <div>
+            <label>Quantity *</label>
+            <input
+              type="number"
+              id="quantity"
+              min="1"
+              value="1"
+              required
+            />
+          </div>
 
-  </select>
+          <div>
+            <label>Original Price *</label>
+            <input
+              type="number"
+              id="originalPrice"
+              min="0"
+              step="0.01"
+              required
+            />
+          </div>
+
+          <div>
+            <label>Discount</label>
+            <input
+              type="number"
+              id="discount"
+              min="0"
+              step="0.01"
+              value="0"
+            />
+          </div>
+
+          <div>
+            <label>Final Amount</label>
+            <input
+              type="number"
+              id="finalAmount"
+              readonly
+              style="background:#f5f5f5;font-weight:bold;"
+            />
+          </div>
+
+          <div>
+            <label>Payment Method *</label>
+            <select id="paymentMethod" required>
+              <option value="">Select Payment</option>
+              <option value="Cash">Cash</option>
+              <option value="UPI">UPI</option>
+              <option value="Card">Card</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Sales Person</label>
+            <input
+              type="text"
+              id="salesPerson"
+            />
+          </div>
+
+          <div class="full">
+            <label>Notes</label>
+            <textarea
+              id="purchaseNotes"
+              placeholder="Any additional note..."
+            ></textarea>
+          </div>
+
+        </div>
+
+        <div class="actions">
+          <button
+            type="submit"
+            class="btn-primary"
+          >
+            Add Purchase
+          </button>
+        </div>
+
+        <div id="purchaseMessage"></div>
+
+      </form>
+
+    </div>
 
 
-  <label for="quantity">
-    Quantity
-  </label>
+    <!-- ================= CUSTOMER PURCHASE HISTORY ================= -->
 
-  <input
-    type="number"
-    id="quantity"
-    min="1"
-    value="1"
-  >
+    <div class="card">
+
+      <div class="section-title">
+        <h2>Customer Purchase History</h2>
+      </div>
+
+      <div class="form-grid">
+
+        <div>
+          <label>Customer Mobile Number</label>
+          <input
+            type="tel"
+            id="historyMobile"
+            maxlength="10"
+            placeholder="Enter mobile number"
+          />
+        </div>
+
+      </div>
+
+      <div class="actions">
+
+        <button
+          class="btn-primary"
+          id="historySearchBtn"
+          type="button"
+        >
+          Search History
+        </button>
+
+      </div>
+
+      <div id="historyMessage"></div>
+
+      <div
+        id="customerHistoryResult"
+        class="hidden"
+        style="margin-top:20px;"
+      >
+
+        <h3 id="historyCustomerName"></h3>
+
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Invoice</th>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Qty</th>
+                <th>Original Price</th>
+                <th>Discount</th>
+                <th>Final Amount</th>
+                <th>Payment</th>
+                <th>Sales Person</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+
+            <tbody id="historyTableBody"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
 
 
-  <label for="originalPrice">
-    Original Price / Cost
-  </label>
+    <!-- ================= ALL PURCHASE HISTORY ================= -->
 
-  <input
-    type="number"
-    id="originalPrice"
-    min="0"
-    step="0.01"
-    placeholder="Example: 1500"
-    oninput="calculateFinalAmount()"
-  >
+    <div class="card">
+
+      <div class="section-title">
+
+        <div>
+          <h2>All Purchase History</h2>
+          <div style="color:#777;font-size:14px;">
+            Complete store purchase history
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top:0;">
+          <button
+            class="btn-light"
+            id="refreshDataBtn"
+            type="button"
+          >
+            🔄 Refresh
+          </button>
+
+          <button
+            class="btn-primary"
+            id="downloadCsvBtn"
+            type="button"
+          >
+            📥 Download CSV
+          </button>
+        </div>
+
+      </div>
 
 
-  <label for="discount">
-    Discount
-  </label>
+      <!-- STATS -->
 
-  <input
-    type="number"
-    id="discount"
-    min="0"
-    step="0.01"
-    value="0"
-    placeholder="Example: 200"
-    oninput="calculateFinalAmount()"
-  >
+      <div class="stats">
+
+        <div class="stat">
+          <div class="stat-title">
+            Total Members
+          </div>
+
+          <div
+            class="stat-value"
+            id="totalMembers"
+          >
+            0
+          </div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-title">
+            Total Purchases
+          </div>
+
+          <div
+            class="stat-value"
+            id="totalPurchases"
+          >
+            0
+          </div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-title">
+            Total Items
+          </div>
+
+          <div
+            class="stat-value"
+            id="totalItems"
+          >
+            0
+          </div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-title">
+            Total Sales
+          </div>
+
+          <div
+            class="stat-value"
+            id="totalSales"
+          >
+            ₹0
+          </div>
+        </div>
+
+      </div>
 
 
-  <label for="finalAmount">
-    Final Amount
-  </label>
+      <!-- FILTERS -->
 
-  <input
-    type="number"
-    id="finalAmount"
-    class="auto-amount"
-    readonly
-    placeholder="Automatically calculated"
-  >
+      <div class="filter-grid">
 
-  <div class="small">
-    Final Amount = Original Price − Discount
+        <div>
+          <label>Search</label>
+          <input
+            type="text"
+            id="allSearch"
+            placeholder="Name, mobile, ID, product, invoice..."
+          />
+        </div>
+
+        <div>
+          <label>Category</label>
+          <select id="allCategory">
+            <option value="">All Categories</option>
+            <option value="Dress">Dress</option>
+            <option value="Co-ord Set">Co-ord Set</option>
+            <option value="Kurti">Kurti</option>
+            <option value="Top">Top</option>
+            <option value="Skirt">Skirt</option>
+            <option value="Jewellery">Jewellery</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Payment</label>
+          <select id="allPayment">
+            <option value="">All Payments</option>
+            <option value="Cash">Cash</option>
+            <option value="UPI">UPI</option>
+            <option value="Card">Card</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label>From Date</label>
+          <input
+            type="date"
+            id="fromDate"
+          />
+        </div>
+
+        <div>
+          <label>To Date</label>
+          <input
+            type="date"
+            id="toDate"
+          />
+        </div>
+
+      </div>
+
+
+      <div class="actions">
+
+        <button
+          class="btn-primary"
+          id="applyFiltersBtn"
+          type="button"
+        >
+          Apply Filters
+        </button>
+
+        <button
+          class="btn-light"
+          id="clearFiltersBtn"
+          type="button"
+        >
+          Clear Filters
+        </button>
+
+      </div>
+
+
+      <div
+        id="allHistoryMessage"
+        style="margin-top:15px;"
+      ></div>
+
+
+      <!-- ALL HISTORY TABLE -->
+
+      <div
+        class="table-wrapper"
+        style="margin-top:20px;"
+      >
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Membership ID</th>
+              <th>Customer Name</th>
+              <th>Mobile</th>
+              <th>Purchase Date</th>
+              <th>Invoice</th>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Qty</th>
+              <th>Original Price</th>
+              <th>Discount</th>
+              <th>Final Amount</th>
+              <th>Payment</th>
+              <th>Sales Person</th>
+              <th>Notes</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="allHistoryBody"></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
   </div>
-
-
-  <label for="paymentMethod">
-    Payment Method
-  </label>
-
-  <select id="paymentMethod">
-
-    <option value="Cash">
-      Cash
-    </option>
-
-    <option value="UPI">
-      UPI
-    </option>
-
-    <option value="Card">
-      Card
-    </option>
-
-    <option value="Other">
-      Other
-    </option>
-
-  </select>
-
-
-  <label for="salesPerson">
-    Sales Person / Staff
-  </label>
-
-  <input
-    type="text"
-    id="salesPerson"
-    placeholder="Enter staff name"
-  >
-
-
-  <label for="notes">
-    Notes
-  </label>
-
-  <textarea
-    id="notes"
-    placeholder="Any additional notes..."
-  ></textarea>
-
-
-  <button onclick="addPurchase()">
-    Add Purchase
-  </button>
-
-  <div id="purchaseMessage"></div>
-
-
-  <hr class="divider">
-
-
-  <!-- ==================================================
-       PURCHASE HISTORY
-  ================================================== -->
-
-  <h2>Purchase History</h2>
-
-  <label for="historyMobile">
-    Search by Mobile Number
-  </label>
-
-  <input
-    type="tel"
-    id="historyMobile"
-    maxlength="10"
-    inputmode="numeric"
-    placeholder="Enter 10 digit mobile number"
-  >
-
-  <button onclick="loadPurchaseHistory()">
-    Search Purchase History
-  </button>
-
-  <div id="purchaseHistory"></div>
-
-
-  <button
-    class="logout"
-    onclick="logoutAdmin()"
-  >
-    Logout
-  </button>
-
-</div>
 
 </div>
 
 
 <script>
 
-/* ==================================================
-   SUPABASE CONFIGURATION
-================================================== */
-
-/*
-  IMPORTANT:
-
-  SUPABASE_URL ko change mat karna.
-
-  SUPABASE_KEY mein apni Supabase
-  PUBLISHABLE KEY paste karna.
-
-  Service Role / Secret Key yahan MAT daalna.
-*/
+/* =========================================================
+   SUPABASE CONFIG
+   ========================================================= */
 
 const SUPABASE_URL =
-  "https://vwcabveqbupgomtxbank.supabase.co";
+https://vwcabveqbupgomtxbank.supabase.co
 
-const SUPABASE_KEY =
+  const SUPABASE_KEY =
 sb_publishable_ptUS0rXG84wr7A-53970aA_Y328CYJj
 
-/* ==================================================
-   SUPABASE CLIENT
-================================================== */
+  const ADMIN_EMAIL =
+  "anuvioffice@gmail.com";
+
 
 const supabaseClient =
   window.supabase.createClient(
@@ -606,836 +878,845 @@ const supabaseClient =
   );
 
 
-/* ==================================================
-   ADMIN EMAIL
-================================================== */
+/* =========================================================
+   GLOBAL DATA
+   ========================================================= */
 
-const ADMIN_EMAIL =
-  "anuvioffice@gmail.com";
-
-
-/* ==================================================
-   LOGIN
-================================================== */
-
-async function loginAdmin(){
-
-  const email =
-    document
-      .getElementById("loginEmail")
-      .value
-      .trim();
-
-  const password =
-    document
-      .getElementById("loginPassword")
-      .value;
-
-  const message =
-    document
-      .getElementById("loginMessage");
-
-  message.innerHTML = "";
+let allCustomers = [];
+let allPurchases = [];
+let filteredPurchases = [];
 
 
-  if(!email || !password){
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
 
-    showError(
-      message,
-      "Please enter email and password."
-    );
+const loginSection =
+  document.getElementById("loginSection");
 
-    return;
-  }
-
-
-  if(email.toLowerCase() !== ADMIN_EMAIL){
-
-    showError(
-      message,
-      "This email is not authorized for admin access."
-    );
-
-    return;
-  }
+const adminSection =
+  document.getElementById("adminSection");
 
 
-  const { data, error } =
-    await supabaseClient.auth.signInWithPassword({
+/* =========================================================
+   HELPERS
+   ========================================================= */
 
-      email:email,
+function showMessage(elementId, message, type = "info") {
 
-      password:password
+  const el =
+    document.getElementById(elementId);
 
-    });
+  if (!el) return;
 
-
-  if(error){
-
-    showError(
-      message,
-      error.message
-    );
-
-    return;
-  }
-
-
-  if(
-    !data ||
-    !data.user ||
-    data.user.email.toLowerCase() !== ADMIN_EMAIL
-  ){
-
-    await supabaseClient.auth.signOut();
-
-    showError(
-      message,
-      "Admin access denied."
-    );
-
-    return;
-  }
-
-
-  document
-    .getElementById("loginSection")
-    .classList.add("hidden");
-
-  document
-    .getElementById("adminSection")
-    .classList.remove("hidden");
-
-  setTodayDate();
+  el.innerHTML =
+    `<div class="message ${type}">${escapeHtml(message)}</div>`;
 }
 
 
-/* ==================================================
-   CREATE MEMBERSHIP
-================================================== */
+function escapeHtml(value) {
 
-async function createMembership(){
-
-  const name =
-    document
-      .getElementById("customerName")
-      .value
-      .trim();
-
-  const mobile =
-    document
-      .getElementById("customerMobile")
-      .value
-      .trim();
-
-  const email =
-    document
-      .getElementById("customerEmail")
-      .value
-      .trim();
-
-  const message =
-    document
-      .getElementById("membershipMessage");
-
-  message.innerHTML = "";
-
-
-  if(!name){
-
-    showError(
-      message,
-      "Please enter customer name."
-    );
-
-    return;
+  if (value === null || value === undefined) {
+    return "";
   }
 
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
-  if(!/^[0-9]{10}$/.test(mobile)){
 
-    showError(
-      message,
-      "Please enter a valid 10 digit mobile number."
-    );
+function getTodayLocal() {
 
-    return;
+  const now = new Date();
+
+  const year =
+    now.getFullYear();
+
+  const month =
+    String(now.getMonth() + 1)
+      .padStart(2, "0");
+
+  const day =
+    String(now.getDate())
+      .padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+
+function formatDate(dateValue) {
+
+  if (!dateValue) return "";
+
+  const date =
+    new Date(dateValue + "T00:00:00");
+
+  if (isNaN(date.getTime())) {
+    return dateValue;
   }
 
-
-  if(!email){
-
-    showError(
-      message,
-      "Please enter customer email."
-    );
-
-    return;
-  }
-
-
-  /* Check duplicate mobile */
-
-  const {
-    data:existingCustomer,
-    error:existingError
-  } =
-    await supabaseClient
-      .from("Customers")
-      .select("Membership_id")
-      .eq("Contact Number", mobile)
-      .maybeSingle();
-
-
-  if(existingError){
-
-    showError(
-      message,
-      existingError.message
-    );
-
-    return;
-  }
-
-
-  if(existingCustomer){
-
-    showError(
-      message,
-      "This mobile number already has membership: " +
-      existingCustomer.Membership_id
-    );
-
-    return;
-  }
-
-
-  /* Get latest Membership ID */
-
-  const {
-    data:customers,
-    error:fetchError
-  } =
-    await supabaseClient
-      .from("Customers")
-      .select("Membership_id")
-      .order("Membership_id", {
-        ascending:false
-      })
-      .limit(1);
-
-
-  if(fetchError){
-
-    showError(
-      message,
-      fetchError.message
-    );
-
-    return;
-  }
-
-
-  let nextNumber = 1;
-
-
-  if(customers && customers.length > 0){
-
-    const lastId =
-      customers[0].Membership_id;
-
-    const number =
-      parseInt(
-        String(lastId).replace("ANUVI",""),
-        10
-      );
-
-    if(!isNaN(number)){
-      nextNumber = number + 1;
+  return date.toLocaleDateString(
+    "en-IN",
+    {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
     }
-  }
-
-
-  const membershipId =
-    "ANUVI" +
-    String(nextNumber).padStart(3,"0");
-
-
-  const today =
-    new Date();
-
-  const validTill =
-    new Date();
-
-  validTill.setFullYear(
-    validTill.getFullYear() + 1
   );
-
-
-  const membershipDate =
-    getLocalDate(today);
-
-  const validTillDate =
-    getLocalDate(validTill);
-
-
-  /* Insert */
-
-  const { error:insertError } =
-    await supabaseClient
-      .from("Customers")
-      .insert([{
-
-        Membership_id:
-          membershipId,
-
-        Customer_name:
-          name,
-
-        "Contact Number":
-          mobile,
-
-        Email:
-          email,
-
-        Membership_date:
-          membershipDate,
-
-        Membership_status:
-          "Active"
-
-      }]);
-
-
-  if(insertError){
-
-    showError(
-      message,
-      insertError.message
-    );
-
-    return;
-  }
-
-
-  message.innerHTML =
-
-    '<div class="message success">' +
-
-      'Membership created successfully!' +
-
-      '<div class="membership-result">' +
-
-        '<div>Membership ID</div>' +
-
-        '<div class="membership-id">' +
-          escapeHtml(membershipId) +
-        '</div>' +
-
-        '<div><strong>Customer:</strong> ' +
-          escapeHtml(name) +
-        '</div>' +
-
-        '<div><strong>Mobile:</strong> ' +
-          escapeHtml(mobile) +
-        '</div>' +
-
-        '<div><strong>Valid Till:</strong> ' +
-          formatDate(validTillDate) +
-        '</div>' +
-
-      '</div>' +
-
-    '</div>';
-
-
-  document
-    .getElementById("customerName")
-    .value = "";
-
-  document
-    .getElementById("customerMobile")
-    .value = "";
-
-  document
-    .getElementById("customerEmail")
-    .value = "";
 }
 
 
-/* ==================================================
-   FIND CUSTOMER BY MOBILE
-================================================== */
+function money(value) {
 
-async function findCustomer(){
+  const number =
+    Number(value || 0);
 
-  const mobile =
-    document
-      .getElementById("purchaseMobile")
-      .value
-      .trim();
-
-  const info =
-    document
-      .getElementById("customerInfo");
-
-  info.innerHTML = "";
-
-
-  if(!mobile){
-    return;
-  }
-
-
-  if(!/^[0-9]{10}$/.test(mobile)){
-
-    showError(
-      info,
-      "Please enter a valid 10 digit mobile number."
+  return "₹" +
+    number.toLocaleString(
+      "en-IN",
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }
     );
-
-    return;
-  }
-
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("Customers")
-      .select(
-        "Membership_id, Customer_name"
-      )
-      .eq("Contact Number", mobile)
-      .maybeSingle();
-
-
-  if(error){
-
-    showError(
-      info,
-      error.message
-    );
-
-    return;
-  }
-
-
-  if(!data){
-
-    showError(
-      info,
-      "Customer not found. Please check mobile number."
-    );
-
-    return;
-  }
-
-
-  info.innerHTML =
-
-    '<div class="customer-info">' +
-
-      '<strong>Customer:</strong> ' +
-      escapeHtml(data.Customer_name) +
-
-      '<br>' +
-
-      '<strong>Membership ID:</strong> ' +
-      escapeHtml(data.Membership_id) +
-
-    '</div>';
 }
 
 
-/* ==================================================
-   AUTO FINAL AMOUNT
-================================================== */
+/* =========================================================
+   FINAL AMOUNT CALCULATION
+   ========================================================= */
 
-function calculateFinalAmount(){
+function calculateFinalAmount() {
 
-  const originalPrice =
-    parseFloat(
-      document
-        .getElementById("originalPrice")
-        .value
-    ) || 0;
-
-
-  const discount =
-    parseFloat(
-      document
-        .getElementById("discount")
-        .value
-    ) || 0;
-
-
-  let finalAmount =
-    originalPrice - discount;
-
-
-  if(finalAmount < 0){
-    finalAmount = 0;
-  }
-
-
-  document
-    .getElementById("finalAmount")
-    .value =
-      finalAmount.toFixed(2);
-}
-
-
-/* ==================================================
-   ADD PURCHASE
-================================================== */
-
-async function addPurchase(){
-
-  const mobile =
-    document
-      .getElementById("purchaseMobile")
-      .value
-      .trim();
-
-  const purchaseDate =
-    document
-      .getElementById("purchaseDate")
-      .value;
-
-  const invoiceNumber =
-    document
-      .getElementById("invoiceNumber")
-      .value
-      .trim();
-
-  const productName =
-    document
-      .getElementById("productName")
-      .value
-      .trim();
-
-  const category =
-    document
-      .getElementById("category")
-      .value;
-
-  const quantity =
-    parseInt(
-      document
-        .getElementById("quantity")
-        .value,
-      10
-    ) || 1;
-
-  const originalPrice =
-    parseFloat(
-      document
-        .getElementById("originalPrice")
-        .value
+  const original =
+    Number(
+      document.getElementById("originalPrice").value
     ) || 0;
 
   const discount =
-    parseFloat(
-      document
-        .getElementById("discount")
-        .value
+    Number(
+      document.getElementById("discount").value
     ) || 0;
 
   const finalAmount =
     Math.max(
       0,
-      originalPrice - discount
+      original - discount
     );
 
-  const paymentMethod =
-    document
-      .getElementById("paymentMethod")
-      .value;
-
-  const salesPerson =
-    document
-      .getElementById("salesPerson")
-      .value
-      .trim();
-
-  const notes =
-    document
-      .getElementById("notes")
-      .value
-      .trim();
-
-  const message =
-    document
-      .getElementById("purchaseMessage");
-
-  message.innerHTML = "";
-
-
-  /* Validation */
-
-  if(!/^[0-9]{10}$/.test(mobile)){
-
-    showError(
-      message,
-      "Please enter a valid 10 digit mobile number."
-    );
-
-    return;
-  }
-
-
-  if(!purchaseDate){
-
-    showError(
-      message,
-      "Please select purchase date."
-    );
-
-    return;
-  }
-
-
-  if(!productName){
-
-    showError(
-      message,
-      "Please enter product name."
-    );
-
-    return;
-  }
-
-
-  if(quantity < 1){
-
-    showError(
-      message,
-      "Quantity must be at least 1."
-    );
-
-    return;
-  }
-
-
-  if(originalPrice < 0){
-
-    showError(
-      message,
-      "Original Price cannot be negative."
-    );
-
-    return;
-  }
-
-
-  if(discount < 0){
-
-    showError(
-      message,
-      "Discount cannot be negative."
-    );
-
-    return;
-  }
-
-
-  if(discount > originalPrice){
-
-    showError(
-      message,
-      "Discount cannot be greater than Original Price."
-    );
-
-    return;
-  }
-
-
-  /* Find customer */
-
-  const {
-    data:customer,
-    error:customerError
-  } =
-    await supabaseClient
-      .from("Customers")
-      .select(
-        "Membership_id, Customer_name"
-      )
-      .eq("Contact Number", mobile)
-      .maybeSingle();
-
-
-  if(customerError){
-
-    showError(
-      message,
-      customerError.message
-    );
-
-    return;
-  }
-
-
-  if(!customer){
-
-    showError(
-      message,
-      "Customer not found. Please check mobile number."
-    );
-
-    return;
-  }
-
-
-  /* Insert Purchase */
-
-  const { error } =
-    await supabaseClient
-      .from("Purchases")
-      .insert([{
-
-        Membership_id:
-          customer.Membership_id,
-
-        Purchase_date:
-          purchaseDate,
-
-        Product_name:
-          productName,
-
-        Quantity:
-          quantity,
-
-        Amount:
-          finalAmount,
-
-        Payment_method:
-          paymentMethod,
-
-        Invoice_number:
-          invoiceNumber || null,
-
-        Category:
-          category || null,
-
-        Original_price:
-          originalPrice,
-
-        Discount:
-          discount,
-
-        Sales_person:
-          salesPerson || null,
-
-        Notes:
-          notes || null
-
-      }]);
-
-
-  if(error){
-
-    showError(
-      message,
-      error.message
-    );
-
-    return;
-  }
-
-
-  message.innerHTML =
-
-    '<div class="message success">' +
-
-      'Purchase added successfully ✓' +
-
-      '<br>' +
-
-      'Final Amount: ₹' +
-      finalAmount.toFixed(2) +
-
-    '</div>';
-
-
-  clearPurchaseForm();
+  document.getElementById(
+    "finalAmount"
+  ).value = finalAmount.toFixed(2);
 }
 
 
-/* ==================================================
-   PURCHASE HISTORY
-================================================== */
+document
+  .getElementById("originalPrice")
+  .addEventListener(
+    "input",
+    calculateFinalAmount
+  );
 
-async function loadPurchaseHistory(){
+
+document
+  .getElementById("discount")
+  .addEventListener(
+    "input",
+    calculateFinalAmount
+  );
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+document
+  .getElementById("loginForm")
+  .addEventListener(
+    "submit",
+    async function(event) {
+
+      event.preventDefault();
+
+      const email =
+        document.getElementById(
+          "loginEmail"
+        ).value.trim();
+
+      const password =
+        document.getElementById(
+          "loginPassword"
+        ).value;
+
+      if (email !== ADMIN_EMAIL) {
+
+        showMessage(
+          "loginMessage",
+          "Only authorized admin email can login.",
+          "error"
+        );
+
+        return;
+      }
+
+      const {
+        error
+      } =
+        await supabaseClient.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if (error) {
+
+        showMessage(
+          "loginMessage",
+          error.message,
+          "error"
+        );
+
+        return;
+      }
+
+      showAdminPanel();
+    }
+  );
+
+
+/* =========================================================
+   SHOW ADMIN
+   ========================================================= */
+
+async function showAdminPanel() {
+
+  const {
+    data: {
+      session
+    }
+  } =
+    await supabaseClient.auth.getSession();
+
+  if (!session) return;
+
+  if (
+    session.user.email !== ADMIN_EMAIL
+  ) {
+
+    await supabaseClient.auth.signOut();
+
+    showMessage(
+      "loginMessage",
+      "Unauthorized account.",
+      "error"
+    );
+
+    return;
+  }
+
+  loginSection.classList.add("hidden");
+  adminSection.classList.remove("hidden");
+
+  document.getElementById(
+    "membershipDate"
+  ).value = getTodayLocal();
+
+  document.getElementById(
+    "purchaseDate"
+  ).value = getTodayLocal();
+
+  calculateFinalAmount();
+
+  await loadAllData();
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+document
+  .getElementById("logoutBtn")
+  .addEventListener(
+    "click",
+    async function() {
+
+      await supabaseClient.auth.signOut();
+
+      adminSection.classList.add("hidden");
+      loginSection.classList.remove("hidden");
+
+      document.getElementById(
+        "loginPassword"
+      ).value = "";
+
+    }
+  );
+
+
+/* =========================================================
+   CREATE MEMBERSHIP
+   ========================================================= */
+
+document
+  .getElementById("membershipForm")
+  .addEventListener(
+    "submit",
+    async function(event) {
+
+      event.preventDefault();
+
+      showMessage(
+        "membershipMessage",
+        "Creating membership...",
+        "info"
+      );
+
+      const name =
+        document.getElementById(
+          "customerName"
+        ).value.trim();
+
+      const mobile =
+        document.getElementById(
+          "customerMobile"
+        ).value.trim();
+
+      const email =
+        document.getElementById(
+          "customerEmail"
+        ).value.trim();
+
+      const membershipDate =
+        document.getElementById(
+          "membershipDate"
+        ).value ||
+        getTodayLocal();
+
+
+      if (!/^\d{10}$/.test(mobile)) {
+
+        showMessage(
+          "membershipMessage",
+          "Please enter a valid 10 digit mobile number.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      /* Check duplicate mobile */
+
+      const {
+        data: existing,
+        error: existingError
+      } =
+        await supabaseClient
+          .from("Customers")
+          .select("*")
+          .eq(
+            "Contact Number",
+            mobile
+          )
+          .maybeSingle();
+
+
+      if (existingError) {
+
+        showMessage(
+          "membershipMessage",
+          existingError.message,
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (existing) {
+
+        showMessage(
+          "membershipMessage",
+          "This mobile number already has a membership.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      /* Get existing membership IDs */
+
+      const {
+        data: customers,
+        error: customerError
+      } =
+        await supabaseClient
+          .from("Customers")
+          .select("Membership_id");
+
+
+      if (customerError) {
+
+        showMessage(
+          "membershipMessage",
+          customerError.message,
+          "error"
+        );
+
+        return;
+      }
+
+
+      let maxNumber = 0;
+
+      (customers || []).forEach(
+        customer => {
+
+          const id =
+            customer.Membership_id || "";
+
+          const match =
+            id.match(/ANUVI(\d+)/i);
+
+          if (match) {
+
+            const number =
+              parseInt(
+                match[1],
+                10
+              );
+
+            if (number > maxNumber) {
+              maxNumber = number;
+            }
+          }
+
+        }
+      );
+
+
+      const nextId =
+        "ANUVI" +
+        String(maxNumber + 1)
+          .padStart(3, "0");
+
+
+      /* Valid till = 1 year */
+
+      const startDate =
+        new Date(
+          membershipDate + "T00:00:00"
+        );
+
+      const validTill =
+        new Date(startDate);
+
+      validTill.setFullYear(
+        validTill.getFullYear() + 1
+      );
+
+      const validTillString =
+        validTill
+          .toISOString()
+          .split("T")[0];
+
+
+      const {
+        error: insertError
+      } =
+        await supabaseClient
+          .from("Customers")
+          .insert([
+            {
+              "Membership_id": nextId,
+              "Customer_name": name,
+              "Contact Number": mobile,
+              "Email": email || null,
+              "Membership_date": membershipDate,
+              "Membership_status": "Active",
+              "valid_till": validTillString
+            }
+          ]);
+
+
+      if (insertError) {
+
+        showMessage(
+          "membershipMessage",
+          insertError.message,
+          "error"
+        );
+
+        return;
+      }
+
+
+      showMessage(
+        "membershipMessage",
+        `Membership created successfully: ${nextId}`,
+        "success"
+      );
+
+
+      document
+        .getElementById("membershipForm")
+        .reset();
+
+      document.getElementById(
+        "membershipDate"
+      ).value = getTodayLocal();
+
+
+      await loadAllData();
+
+    }
+  );
+
+
+/* =========================================================
+   ADD PURCHASE
+   ========================================================= */
+
+document
+  .getElementById("purchaseForm")
+  .addEventListener(
+    "submit",
+    async function(event) {
+
+      event.preventDefault();
+
+      showMessage(
+        "purchaseMessage",
+        "Adding purchase...",
+        "info"
+      );
+
+
+      const mobile =
+        document.getElementById(
+          "purchaseMobile"
+        ).value.trim();
+
+      const purchaseDate =
+        document.getElementById(
+          "purchaseDate"
+        ).value;
+
+      const invoiceNumber =
+        document.getElementById(
+          "invoiceNumber"
+        ).value.trim();
+
+      const productName =
+        document.getElementById(
+          "productName"
+        ).value.trim();
+
+      const category =
+        document.getElementById(
+          "category"
+        ).value;
+
+      const quantity =
+        Number(
+          document.getElementById(
+            "quantity"
+          ).value
+        ) || 0;
+
+      const originalPrice =
+        Number(
+          document.getElementById(
+            "originalPrice"
+          ).value
+        ) || 0;
+
+      const discount =
+        Number(
+          document.getElementById(
+            "discount"
+          ).value
+        ) || 0;
+
+      const finalAmount =
+        Math.max(
+          0,
+          originalPrice - discount
+        );
+
+      const paymentMethod =
+        document.getElementById(
+          "paymentMethod"
+        ).value;
+
+      const salesPerson =
+        document.getElementById(
+          "salesPerson"
+        ).value.trim();
+
+      const notes =
+        document.getElementById(
+          "purchaseNotes"
+        ).value.trim();
+
+
+      if (!/^\d{10}$/.test(mobile)) {
+
+        showMessage(
+          "purchaseMessage",
+          "Please enter a valid 10 digit mobile number.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (quantity < 1) {
+
+        showMessage(
+          "purchaseMessage",
+          "Quantity must be at least 1.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (discount > originalPrice) {
+
+        showMessage(
+          "purchaseMessage",
+          "Discount cannot be greater than Original Price.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      /* Find customer by mobile */
+
+      const {
+        data: customer,
+        error: customerError
+      } =
+        await supabaseClient
+          .from("Customers")
+          .select("*")
+          .eq(
+            "Contact Number",
+            mobile
+          )
+          .maybeSingle();
+
+
+      if (customerError) {
+
+        showMessage(
+          "purchaseMessage",
+          customerError.message,
+          "error"
+        );
+
+        return;
+      }
+
+
+      if (!customer) {
+
+        showMessage(
+          "purchaseMessage",
+          "No membership found for this mobile number.",
+          "error"
+        );
+
+        return;
+      }
+
+
+      const {
+        error: purchaseError
+      } =
+        await supabaseClient
+          .from("Purchases")
+          .insert([
+            {
+              Membership_id:
+                customer.Membership_id,
+
+              Purchase_date:
+                purchaseDate,
+
+              Product_name:
+                productName,
+
+              Quantity:
+                quantity,
+
+              Amount:
+                finalAmount,
+
+              Payment_method:
+                paymentMethod,
+
+              Invoice_number:
+                invoiceNumber || null,
+
+              Category:
+                category || null,
+
+              Original_price:
+                originalPrice,
+
+              Discount:
+                discount,
+
+              Sales_person:
+                salesPerson || null,
+
+              Notes:
+                notes || null
+            }
+          ]);
+
+
+      if (purchaseError) {
+
+        showMessage(
+          "purchaseMessage",
+          purchaseError.message,
+          "error"
+        );
+
+        return;
+      }
+
+
+      showMessage(
+        "purchaseMessage",
+        `Purchase added successfully for ${customer.Customer_name}.`,
+        "success"
+      );
+
+
+      document
+        .getElementById("purchaseForm")
+        .reset();
+
+      document.getElementById(
+        "purchaseDate"
+      ).value = getTodayLocal();
+
+      document.getElementById(
+        "quantity"
+      ).value = 1;
+
+      document.getElementById(
+        "discount"
+      ).value = 0;
+
+      calculateFinalAmount();
+
+
+      await loadAllData();
+
+    }
+  );
+
+
+/* =========================================================
+   CUSTOMER PURCHASE HISTORY
+   ========================================================= */
+
+document
+  .getElementById("historySearchBtn")
+  .addEventListener(
+    "click",
+    searchCustomerHistory
+  );
+
+
+async function searchCustomerHistory() {
 
   const mobile =
-    document
-      .getElementById("historyMobile")
-      .value
-      .trim();
-
-  const history =
-    document
-      .getElementById("purchaseHistory");
-
-  history.innerHTML = "";
+    document.getElementById(
+      "historyMobile"
+    ).value.trim();
 
 
-  if(!/^[0-9]{10}$/.test(mobile)){
+  if (!/^\d{10}$/.test(mobile)) {
 
-    showError(
-      history,
-      "Please enter a valid 10 digit mobile number."
+    showMessage(
+      "historyMessage",
+      "Please enter a valid 10 digit mobile number.",
+      "error"
     );
 
     return;
   }
 
 
-  /* Find Customer */
+  showMessage(
+    "historyMessage",
+    "Searching...",
+    "info"
+  );
+
 
   const {
-    data:customer,
-    error:customerError
+    data: customer,
+    error: customerError
   } =
     await supabaseClient
       .from("Customers")
-      .select(
-        "Membership_id, Customer_name"
+      .select("*")
+      .eq(
+        "Contact Number",
+        mobile
       )
-      .eq("Contact Number", mobile)
       .maybeSingle();
 
 
-  if(customerError){
+  if (customerError) {
 
-    showError(
-      history,
-      customerError.message
+    showMessage(
+      "historyMessage",
+      customerError.message,
+      "error"
     );
 
     return;
   }
 
 
-  if(!customer){
+  if (!customer) {
 
-    showError(
-      history,
-      "Customer not found."
+    showMessage(
+      "historyMessage",
+      "No customer found.",
+      "error"
     );
+
+    document
+      .getElementById(
+        "customerHistoryResult"
+      )
+      .classList.add("hidden");
 
     return;
   }
 
-
-  /* Get purchases */
 
   const {
-    data:purchases,
-    error
+    data: purchases,
+    error: purchaseError
   } =
     await supabaseClient
       .from("Purchases")
@@ -1447,397 +1728,863 @@ async function loadPurchaseHistory(){
       .order(
         "Purchase_date",
         {
-          ascending:false
+          ascending: false
         }
       );
 
 
-  if(error){
+  if (purchaseError) {
 
-    showError(
-      history,
-      error.message
+    showMessage(
+      "historyMessage",
+      purchaseError.message,
+      "error"
     );
 
     return;
   }
 
 
-  let html =
-
-    '<div class="customer-info">' +
-
-      '<strong>Customer:</strong> ' +
-      escapeHtml(customer.Customer_name) +
-
-      '<br>' +
-
-      '<strong>Membership ID:</strong> ' +
-      escapeHtml(customer.Membership_id) +
-
-    '</div>';
+  document
+    .getElementById(
+      "historyMessage"
+    ).innerHTML = "";
 
 
-  if(!purchases || purchases.length === 0){
+  document.getElementById(
+    "customerHistoryResult"
+  ).classList.remove("hidden");
 
-    html +=
 
-      '<div class="message info">' +
-      'No purchase history found.' +
-      '</div>';
+  document.getElementById(
+    "historyCustomerName"
+  ).textContent =
+    `${customer.Customer_name} — ${customer.Membership_id}`;
 
-    history.innerHTML = html;
+
+  const tbody =
+    document.getElementById(
+      "historyTableBody"
+    );
+
+  tbody.innerHTML = "";
+
+
+  if (!purchases || purchases.length === 0) {
+
+    tbody.innerHTML =
+      `<tr>
+        <td colspan="11" style="text-align:center;">
+          No purchases found.
+        </td>
+      </tr>`;
 
     return;
   }
 
 
-  purchases.forEach(function(purchase){
+  purchases.forEach(
+    purchase => {
 
-    html +=
+      const row =
+        document.createElement("tr");
 
-      '<div class="purchase-card">' +
+      row.innerHTML = `
 
-        '<strong>Date:</strong> ' +
-        formatDate(
-          purchase.Purchase_date
-        ) +
+        <td>${escapeHtml(formatDate(purchase.Purchase_date))}</td>
 
-        '<br>' +
+        <td>${escapeHtml(purchase.Invoice_number || "-")}</td>
 
-        '<strong>Product:</strong> ' +
-        escapeHtml(
-          purchase.Product_name || "-"
-        ) +
+        <td>${escapeHtml(purchase.Product_name || "-")}</td>
 
-        '<br>' +
+        <td>${escapeHtml(purchase.Category || "-")}</td>
 
-        '<strong>Category:</strong> ' +
-        escapeHtml(
-          purchase.Category || "-"
-        ) +
+        <td>${escapeHtml(purchase.Quantity || 0)}</td>
 
-        '<br>' +
+        <td>${money(purchase.Original_price)}</td>
 
-        '<strong>Quantity:</strong> ' +
-        (purchase.Quantity || 0) +
+        <td>${money(purchase.Discount)}</td>
 
-        '<br>' +
+        <td class="amount">${money(purchase.Amount)}</td>
 
-        '<strong>Original Price / Cost:</strong> ₹' +
-        Number(
-          purchase.Original_price || 0
-        ).toFixed(2) +
+        <td>${escapeHtml(purchase.Payment_method || "-")}</td>
 
-        '<br>' +
+        <td>${escapeHtml(purchase.Sales_person || "-")}</td>
 
-        '<strong>Discount:</strong> ₹' +
-        Number(
-          purchase.Discount || 0
-        ).toFixed(2) +
+        <td>${escapeHtml(purchase.Notes || "-")}</td>
 
-        '<br>' +
+      `;
 
-        '<strong>Final Amount:</strong> ₹' +
-        Number(
-          purchase.Amount || 0
-        ).toFixed(2) +
+      tbody.appendChild(row);
 
-        '<br>' +
+    }
+  );
 
-        '<strong>Payment:</strong> ' +
-        escapeHtml(
-          purchase.Payment_method || "-"
-        ) +
-
-        '<br>' +
-
-        '<strong>Invoice:</strong> ' +
-        escapeHtml(
-          purchase.Invoice_number || "-"
-        ) +
-
-        '<br>' +
-
-        '<strong>Sales Person:</strong> ' +
-        escapeHtml(
-          purchase.Sales_person || "-"
-        ) +
-
-        '<br>' +
-
-        '<strong>Notes:</strong> ' +
-        escapeHtml(
-          purchase.Notes || "-"
-        ) +
-
-      '</div>';
-
-  });
-
-
-  history.innerHTML = html;
 }
 
 
-/* ==================================================
-   CLEAR PURCHASE FORM
-================================================== */
+/* =========================================================
+   LOAD ALL DATA
+   ========================================================= */
 
-function clearPurchaseForm(){
-
-  document
-    .getElementById("purchaseMobile")
-    .value = "";
-
-  document
-    .getElementById("customerInfo")
-    .innerHTML = "";
-
-  document
-    .getElementById("invoiceNumber")
-    .value = "";
-
-  document
-    .getElementById("productName")
-    .value = "";
-
-  document
-    .getElementById("category")
-    .value = "";
-
-  document
-    .getElementById("quantity")
-    .value = "1";
-
-  document
-    .getElementById("originalPrice")
-    .value = "";
-
-  document
-    .getElementById("discount")
-    .value = "0";
-
-  document
-    .getElementById("finalAmount")
-    .value = "";
-
-  document
-    .getElementById("paymentMethod")
-    .value = "Cash";
-
-  document
-    .getElementById("salesPerson")
-    .value = "";
-
-  document
-    .getElementById("notes")
-    .value = "";
-
-  setTodayDate();
-}
-
-
-/* ==================================================
-   LOGOUT
-================================================== */
-
-async function logoutAdmin(){
-
-  await supabaseClient.auth.signOut();
-
-  document
-    .getElementById("adminSection")
-    .classList.add("hidden");
-
-  document
-    .getElementById("loginSection")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("loginPassword")
-    .value = "";
-}
-
-
-/* ==================================================
-   CHECK EXISTING SESSION
-================================================== */
-
-async function checkLogin(){
+async function loadAllData() {
 
   const {
-    data,
-    error
+    data: customers,
+    error: customerError
+  } =
+    await supabaseClient
+      .from("Customers")
+      .select("*")
+      .order(
+        "Membership_id",
+        {
+          ascending: true
+        }
+      );
+
+
+  if (customerError) {
+
+    showMessage(
+      "allHistoryMessage",
+      customerError.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  const {
+    data: purchases,
+    error: purchaseError
+  } =
+    await supabaseClient
+      .from("Purchases")
+      .select("*")
+      .order(
+        "Purchase_date",
+        {
+          ascending: false
+        }
+      );
+
+
+  if (purchaseError) {
+
+    showMessage(
+      "allHistoryMessage",
+      purchaseError.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  allCustomers =
+    customers || [];
+
+  allPurchases =
+    purchases || [];
+
+
+  updateStats();
+
+  populateCategories();
+
+  applyFilters();
+
+}
+
+
+/* =========================================================
+   UPDATE STATS
+   ========================================================= */
+
+function updateStats() {
+
+  const totalMembers =
+    allCustomers.length;
+
+  const totalPurchases =
+    allPurchases.length;
+
+  const totalItems =
+    allPurchases.reduce(
+      (sum, purchase) =>
+        sum +
+        Number(
+          purchase.Quantity || 0
+        ),
+      0
+    );
+
+  const totalSales =
+    allPurchases.reduce(
+      (sum, purchase) =>
+        sum +
+        Number(
+          purchase.Amount || 0
+        ),
+      0
+    );
+
+
+  document.getElementById(
+    "totalMembers"
+  ).textContent =
+    totalMembers;
+
+
+  document.getElementById(
+    "totalPurchases"
+  ).textContent =
+    totalPurchases;
+
+
+  document.getElementById(
+    "totalItems"
+  ).textContent =
+    totalItems;
+
+
+  document.getElementById(
+    "totalSales"
+  ).textContent =
+    money(totalSales);
+
+}
+
+
+/* =========================================================
+   POPULATE CATEGORIES
+   ========================================================= */
+
+function populateCategories() {
+
+  const select =
+    document.getElementById(
+      "allCategory"
+    );
+
+  const current =
+    select.value;
+
+
+  const categories =
+    [
+      ...new Set(
+        allPurchases
+          .map(
+            p => p.Category
+          )
+          .filter(Boolean)
+      )
+    ]
+    .sort();
+
+
+  select.innerHTML =
+    `<option value="">All Categories</option>`;
+
+
+  categories.forEach(
+    category => {
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        category;
+
+      option.textContent =
+        category;
+
+      select.appendChild(option);
+
+    }
+  );
+
+
+  select.value =
+    current;
+
+}
+
+
+/* =========================================================
+   APPLY FILTERS
+   ========================================================= */
+
+document
+  .getElementById("applyFiltersBtn")
+  .addEventListener(
+    "click",
+    applyFilters
+  );
+
+
+document
+  .getElementById("allSearch")
+  .addEventListener(
+    "input",
+    applyFilters
+  );
+
+
+document
+  .getElementById("allCategory")
+  .addEventListener(
+    "change",
+    applyFilters
+  );
+
+
+document
+  .getElementById("allPayment")
+  .addEventListener(
+    "change",
+    applyFilters
+  );
+
+
+document
+  .getElementById("fromDate")
+  .addEventListener(
+    "change",
+    applyFilters
+  );
+
+
+document
+  .getElementById("toDate")
+  .addEventListener(
+    "change",
+    applyFilters
+  );
+
+
+function applyFilters() {
+
+  const search =
+    document.getElementById(
+      "allSearch"
+    ).value
+      .trim()
+      .toLowerCase();
+
+
+  const category =
+    document.getElementById(
+      "allCategory"
+    ).value;
+
+
+  const payment =
+    document.getElementById(
+      "allPayment"
+    ).value;
+
+
+  const fromDate =
+    document.getElementById(
+      "fromDate"
+    ).value;
+
+
+  const toDate =
+    document.getElementById(
+      "toDate"
+    ).value;
+
+
+  filteredPurchases =
+    allPurchases.filter(
+      purchase => {
+
+        const customer =
+          allCustomers.find(
+            c =>
+              c.Membership_id ===
+              purchase.Membership_id
+          );
+
+
+        const customerName =
+          customer
+            ? customer.Customer_name || ""
+            : "";
+
+
+        const customerMobile =
+          customer
+            ? customer["Contact Number"] || ""
+            : "";
+
+
+        const searchableText =
+          [
+            purchase.Membership_id,
+            customerName,
+            customerMobile,
+            purchase.Product_name,
+            purchase.Invoice_number,
+            purchase.Category,
+            purchase.Sales_person,
+            purchase.Payment_method
+          ]
+          .join(" ")
+          .toLowerCase();
+
+
+        if (
+          search &&
+          !searchableText.includes(search)
+        ) {
+          return false;
+        }
+
+
+        if (
+          category &&
+          purchase.Category !== category
+        ) {
+          return false;
+        }
+
+
+        if (
+          payment &&
+          purchase.Payment_method !== payment
+        ) {
+          return false;
+        }
+
+
+        if (
+          fromDate &&
+          purchase.Purchase_date < fromDate
+        ) {
+          return false;
+        }
+
+
+        if (
+          toDate &&
+          purchase.Purchase_date > toDate
+        ) {
+          return false;
+        }
+
+
+        return true;
+
+      }
+    );
+
+
+  renderAllHistory();
+
+}
+
+
+/* =========================================================
+   RENDER ALL HISTORY
+   ========================================================= */
+
+function renderAllHistory() {
+
+  const tbody =
+    document.getElementById(
+      "allHistoryBody"
+    );
+
+
+  tbody.innerHTML = "";
+
+
+  if (
+    !filteredPurchases ||
+    filteredPurchases.length === 0
+  ) {
+
+    tbody.innerHTML =
+      `<tr>
+        <td
+          colspan="14"
+          style="text-align:center;padding:25px;"
+        >
+          No purchase records found.
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+
+  filteredPurchases.forEach(
+    purchase => {
+
+      const customer =
+        allCustomers.find(
+          c =>
+            c.Membership_id ===
+            purchase.Membership_id
+        );
+
+
+      const customerName =
+        customer
+          ? customer.Customer_name || "-"
+          : "-";
+
+
+      const customerMobile =
+        customer
+          ? customer["Contact Number"] || "-"
+          : "-";
+
+
+      const row =
+        document.createElement("tr");
+
+
+      row.innerHTML = `
+
+        <td>
+          ${escapeHtml(
+            purchase.Membership_id || "-"
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            customerName
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            customerMobile
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            formatDate(
+              purchase.Purchase_date
+            )
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            purchase.Invoice_number || "-"
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            purchase.Product_name || "-"
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            purchase.Category || "-"
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            purchase.Quantity || 0
+          )}
+        </td>
+
+        <td>
+          ${money(
+            purchase.Original_price
+          )}
+        </td>
+
+        <td>
+          ${money(
+            purchase.Discount
+          )}
+        </td>
+
+        <td class="amount">
+          ${money(
+            purchase.Amount
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            purchase.Payment_method || "-"
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            purchase.Sales_person || "-"
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            purchase.Notes || "-"
+          )}
+        </td>
+
+      `;
+
+
+      tbody.appendChild(row);
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   CLEAR FILTERS
+   ========================================================= */
+
+document
+  .getElementById("clearFiltersBtn")
+  .addEventListener(
+    "click",
+    function() {
+
+      document.getElementById(
+        "allSearch"
+      ).value = "";
+
+      document.getElementById(
+        "allCategory"
+      ).value = "";
+
+      document.getElementById(
+        "allPayment"
+      ).value = "";
+
+      document.getElementById(
+        "fromDate"
+      ).value = "";
+
+      document.getElementById(
+        "toDate"
+      ).value = "";
+
+      applyFilters();
+
+    }
+  );
+
+
+/* =========================================================
+   REFRESH
+   ========================================================= */
+
+document
+  .getElementById("refreshDataBtn")
+  .addEventListener(
+    "click",
+    async function() {
+
+      showMessage(
+        "allHistoryMessage",
+        "Refreshing data...",
+        "info"
+      );
+
+      await loadAllData();
+
+      document.getElementById(
+        "allHistoryMessage"
+      ).innerHTML = "";
+
+    }
+  );
+
+
+/* =========================================================
+   DOWNLOAD CSV
+   ========================================================= */
+
+document
+  .getElementById("downloadCsvBtn")
+  .addEventListener(
+    "click",
+    downloadCSV
+  );
+
+
+function downloadCSV() {
+
+  if (
+    !filteredPurchases ||
+    filteredPurchases.length === 0
+  ) {
+
+    showMessage(
+      "allHistoryMessage",
+      "No data available to download.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  const headers = [
+    "Membership ID",
+    "Customer Name",
+    "Mobile",
+    "Purchase Date",
+    "Invoice",
+    "Product",
+    "Category",
+    "Quantity",
+    "Original Price",
+    "Discount",
+    "Final Amount",
+    "Payment Method",
+    "Sales Person",
+    "Notes"
+  ];
+
+
+  const rows =
+    filteredPurchases.map(
+      purchase => {
+
+        const customer =
+          allCustomers.find(
+            c =>
+              c.Membership_id ===
+              purchase.Membership_id
+          );
+
+
+        return [
+          purchase.Membership_id || "",
+          customer
+            ? customer.Customer_name || ""
+            : "",
+          customer
+            ? customer["Contact Number"] || ""
+            : "",
+          purchase.Purchase_date || "",
+          purchase.Invoice_number || "",
+          purchase.Product_name || "",
+          purchase.Category || "",
+          purchase.Quantity || 0,
+          purchase.Original_price || 0,
+          purchase.Discount || 0,
+          purchase.Amount || 0,
+          purchase.Payment_method || "",
+          purchase.Sales_person || "",
+          purchase.Notes || ""
+        ];
+
+      }
+    );
+
+
+  const csvRows = [
+    headers,
+    ...rows
+  ];
+
+
+  const csv =
+    csvRows
+      .map(
+        row =>
+          row
+            .map(
+              value =>
+                `"${String(value)
+                  .replace(/"/g, '""')}"`
+            )
+            .join(",")
+      )
+      .join("\n");
+
+
+  const blob =
+    new Blob(
+      [csv],
+      {
+        type: "text/csv;charset=utf-8;"
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(blob);
+
+
+  const link =
+    document.createElement("a");
+
+  link.href = url;
+
+  link.download =
+    `ANUVI-Purchase-History-${getTodayLocal()}.csv`;
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(url);
+
+}
+
+
+/* =========================================================
+   SESSION CHECK
+   ========================================================= */
+
+async function checkSession() {
+
+  const {
+    data: {
+      session
+    }
   } =
     await supabaseClient.auth.getSession();
 
 
-  if(error){
-    return;
-  }
+  if (session) {
 
+    if (
+      session.user.email === ADMIN_EMAIL
+    ) {
 
-  if(
-    data &&
-    data.session &&
-    data.session.user &&
-    data.session.user.email &&
-    data.session.user.email.toLowerCase() === ADMIN_EMAIL
-  ){
+      showAdminPanel();
 
-    document
-      .getElementById("loginSection")
-      .classList.add("hidden");
-
-    document
-      .getElementById("adminSection")
-      .classList.remove("hidden");
-
-    setTodayDate();
-
-  }else{
-
-    if(data && data.session){
+    } else {
 
       await supabaseClient.auth.signOut();
 
     }
 
   }
+
 }
 
 
-/* ==================================================
-   TODAY DATE
-================================================== */
-
-function setTodayDate(){
-
-  const today =
-    new Date();
-
-  document
-    .getElementById("purchaseDate")
-    .value =
-      getLocalDate(today);
-}
-
-
-/* ==================================================
-   LOCAL DATE
-================================================== */
-
-function getLocalDate(date){
-
-  const year =
-    date.getFullYear();
-
-  const month =
-    String(
-      date.getMonth() + 1
-    ).padStart(2,"0");
-
-  const day =
-    String(
-      date.getDate()
-    ).padStart(2,"0");
-
-  return (
-    year +
-    "-" +
-    month +
-    "-" +
-    day
-  );
-}
-
-
-/* ==================================================
-   DATE DISPLAY
-================================================== */
-
-function formatDate(dateString){
-
-  if(!dateString){
-    return "-";
-  }
-
-  const parts =
-    String(dateString).split("-");
-
-  if(parts.length !== 3){
-    return dateString;
-  }
-
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec"
-  ];
-
-  const monthIndex =
-    parseInt(parts[1],10) - 1;
-
-  return (
-    parts[2] +
-    " " +
-    (months[monthIndex] || parts[1]) +
-    " " +
-    parts[0]
-  );
-}
-
-
-/* ==================================================
-   ESCAPE HTML
-================================================== */
-
-function escapeHtml(value){
-
-  if(
-    value === null ||
-    value === undefined
-  ){
-    return "";
-  }
-
-  return String(value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-}
-
-
-/* ==================================================
-   ERROR MESSAGE
-================================================== */
-
-function showError(element,message){
-
-  element.innerHTML =
-    '<div class="message error">' +
-    escapeHtml(message) +
-    '</div>';
-}
-
-
-/* ==================================================
-   START
-================================================== */
-
-checkLogin();
+checkSession();
 
 </script>
 
