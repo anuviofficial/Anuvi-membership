@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ANUVI Admin</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #f7f3ed;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      color: #b58b2a;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #777;
+      margin-bottom: 25px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #222;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 7px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #ddd;
+      border-radius: 9px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #b58b2a;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 9px;
+      background: #b58b2a;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 22px;
+    }
+
+    button:hover {
+      background: #96721f;
+    }
+
+    .logout {
+      background: #333;
+      margin-top: 10px;
+    }
+
+    .logout:hover {
+      background: #111;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .message {
+      margin-top: 18px;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .success {
+      background: #e8f7ed;
+      color: #23733d;
+    }
+
+    .error {
+      background: #fdecec;
+      color: #a52828;
+    }
+
+    .membership-result {
+      margin-top: 20px;
+      padding: 20px;
+      background: #faf7f0;
+      border: 1px solid #e5d7b5;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .membership-id {
+      font-size: 28px;
+      font-weight: bold;
+      color: #b58b2a;
+      margin: 10px 0;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #777;
+      text-align: center;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- LOGIN -->
+  <div class="card" id="loginSection">
+
+    <div class="logo">ANUVI</div>
+    <div class="subtitle">Couture</div>
+
+    <h2>Admin Login</h2>
+
+    <label>Admin Email</label>
+    <input
+      type="email"
+      id="loginEmail"
+      placeholder="Enter admin email"
+    >
+
+    <label>Password</label>
+    <input
+      type="password"
+      id="loginPassword"
+      placeholder="Enter password"
+    >
+
+    <button onclick="loginAdmin()">
+      Login
+    </button>
+
+    <div id="loginMessage"></div>
+
+  </div>
+
+
+  <!-- ADMIN DASHBOARD -->
+  <div class="card hidden" id="adminSection">
+
+    <div class="logo">ANUVI</div>
+    <div class="subtitle">Couture Admin Panel</div>
+
+    <h2>Create New Membership</h2>
+
+    <label>Customer Name</label>
+    <input
+      type="text"
+      id="customerName"
+      placeholder="Enter customer name"
+    >
+
+    <label>Mobile Number</label>
+    <input
+      type="tel"
+      id="customerMobile"
+      placeholder="Enter 10 digit mobile number"
+      maxlength="10"
+    >
+
+    <label>Email</label>
+    <input
+      type="email"
+      id="customerEmail"
+      placeholder="Enter customer email"
+    >
+
+    <button onclick="createMembership()">
+      Create Membership
+    </button>
+
+    <div id="membershipMessage"></div>
+
+    <button class="logout" onclick="logoutAdmin()">
+      Logout
+    </button>
+
+    <div class="small">
+      Membership validity: 1 year
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  // ==============================
+  // SUPABASE CONNECTION
+  // ==============================
+
+  const SUPABASE_URL =
+    "https://vwcabveqbupgomtxbank.supabase.co";
+
+  const SUPABASE_KEY =
+    "sb_publishable_ptUS0rXG84wr7A-53970aA_Y328CYJj";
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+
+  // ==============================
+  // ADMIN LOGIN
+  // ==============================
+
+  async function loginAdmin() {
+
+    const email =
+      document.getElementById("loginEmail").value.trim();
+
+    const password =
+      document.getElementById("loginPassword").value;
+
+    const message =
+      document.getElementById("loginMessage");
+
+    message.innerHTML = "";
+
+    if (!email || !password) {
+      message.innerHTML =
+        '<div class="message error">Please enter email and password.</div>';
+      return;
+    }
+
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+    if (error) {
+
+      message.innerHTML =
+        '<div class="message error">' +
+        error.message +
+        '</div>';
+
+      return;
+    }
+
+    document.getElementById("loginSection")
+      .classList.add("hidden");
+
+    document.getElementById("adminSection")
+      .classList.remove("hidden");
+  }
+
+
+  // ==============================
+  // CREATE MEMBERSHIP
+  // ==============================
+
+  async function createMembership() {
+
+    const name =
+      document.getElementById("customerName")
+        .value.trim();
+
+    const mobile =
+      document.getElementById("customerMobile")
+        .value.trim();
+
+    const email =
+      document.getElementById("customerEmail")
+        .value.trim();
+
+    const message =
+      document.getElementById("membershipMessage");
+
+    message.innerHTML = "";
+
+
+    // Check name
+    if (!name) {
+      message.innerHTML =
+        '<div class="message error">Please enter customer name.</div>';
+      return;
+    }
+
+
+    // Check mobile
+    if (!/^[0-9]{10}$/.test(mobile)) {
+
+      message.innerHTML =
+        '<div class="message error">Please enter a valid 10 digit mobile number.</div>';
+
+      return;
+    }
+
+
+    // Check email
+    if (!email) {
+
+      message.innerHTML =
+        '<div class="message error">Please enter customer email.</div>';
+
+      return;
+    }
+
+
+    // Get existing memberships
+    const { data: customers, error: fetchError } =
+      await supabaseClient
+        .from("Customers")
+        .select("Membership_id")
+        .order("Membership_id", { ascending: false })
+        .limit(1);
+
+
+    if (fetchError) {
+
+      message.innerHTML =
+        '<div class="message error">' +
+        fetchError.message +
+        '</div>';
+
+      return;
+    }
+
+
+    // Generate next Membership ID
+
+    let nextNumber = 1;
+
+    if (customers && customers.length > 0) {
+
+      const lastId =
+        customers[0].Membership_id;
+
+      const numberPart =
+        parseInt(
+          lastId.replace("ANUVI", ""),
+          10
+        );
+
+      if (!isNaN(numberPart)) {
+        nextNumber = numberPart + 1;
+      }
+    }
+
+
+    const membershipId =
+      "ANUVI" +
+      String(nextNumber).padStart(3, "0");
+
+
+    // Dates
+
+    const membershipDate =
+      new Date();
+
+    const validTill =
+      new Date();
+
+    validTill.setFullYear(
+      validTill.getFullYear() + 1
+    );
+
+
+    const membershipDateString =
+      membershipDate.toISOString().split("T")[0];
+
+    const validTillString =
+      validTill.toISOString().split("T")[0];
+
+
+    // Insert customer
+
+    const { error: insertError } =
+      await supabaseClient
+        .from("Customers")
+        .insert([{
+
+          Membership_id: membershipId,
+
+          Customer_name: name,
+
+          "Contact Number": mobile,
+
+          Email: email,
+
+          Membership_date:
+            membershipDateString,
+
+          Membership_status:
+            "Active"
+
+        }]);
+
+
+    if (insertError) {
+
+      message.innerHTML =
+        '<div class="message error">' +
+        insertError.message +
+        '</div>';
+
+      return;
+    }
+
+
+    // Success
+
+    message.innerHTML =
+
+      '<div class="message success">' +
+
+      'Membership created successfully!' +
+
+      '<div class="membership-result">' +
+
+      '<div>Membership ID</div>' +
+
+      '<div class="membership-id">' +
+      membershipId +
+      '</div>' +
+
+      '<div><strong>Customer:</strong> ' +
+      name +
+      '</div>' +
+
+      '<div><strong>Valid Till:</strong> ' +
+      validTillString +
+      '</div>' +
+
+      '</div>' +
+
+      '</div>';
+
+
+    // Clear form
+
+    document.getElementById("customerName")
+      .value = "";
+
+    document.getElementById("customerMobile")
+      .value = "";
+
+    document.getElementById("customerEmail")
+      .value = "";
+  }
+
+
+  // ==============================
+  // LOGOUT
+  // ==============================
+
+  async function logoutAdmin() {
+
+    await supabaseClient.auth.signOut();
+
+    document.getElementById("adminSection")
+      .classList.add("hidden");
+
+    document.getElementById("loginSection")
+      .classList.remove("hidden");
+  }
+
+
+  // ==============================
+  // CHECK EXISTING LOGIN
+  // ==============================
+
+  async function checkLogin() {
+
+    const { data } =
+      await supabaseClient.auth.getSession();
+
+    if (data.session) {
+
+      document.getElementById("loginSection")
+        .classList.add("hidden");
+
+      document.getElementById("adminSection")
+        .classList.remove("hidden");
+    }
+  }
+
+  checkLogin();
+
+</script>
+
+</body>
+</html>
