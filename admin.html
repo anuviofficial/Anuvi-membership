@@ -18,13 +18,15 @@
       margin: 0;
       min-height: 100vh;
       background: #f7f3ed;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       padding: 20px;
     }
 
     .container {
       width: 100%;
-      max-width: 850px;
-      margin: auto;
+      max-width: 650px;
     }
 
     .card {
@@ -51,8 +53,16 @@
     }
 
     h2 {
-      margin-bottom: 20px;
+      text-align: center;
+      margin-bottom: 25px;
       color: #222;
+    }
+
+    h3 {
+      color: #333;
+      margin-top: 30px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
     }
 
     label {
@@ -72,10 +82,11 @@
       border-radius: 9px;
       font-size: 15px;
       outline: none;
+      background: white;
     }
 
     textarea {
-      min-height: 80px;
+      min-height: 90px;
       resize: vertical;
     }
 
@@ -104,6 +115,7 @@
 
     .logout {
       background: #333;
+      margin-top: 10px;
     }
 
     .logout:hover {
@@ -138,6 +150,7 @@
       background: #faf7f0;
       border: 1px solid #e5d7b5;
       border-radius: 12px;
+      text-align: center;
     }
 
     .membership-id {
@@ -147,32 +160,22 @@
       margin: 10px 0;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-    }
-
-    .full {
-      grid-column: 1 / -1;
-    }
-
-    .section-title {
-      margin-top: 35px;
-      padding-top: 25px;
-      border-top: 1px solid #eee;
+    .customer-info {
+      margin-top: 15px;
+      padding: 14px;
+      background: #faf7f0;
+      border: 1px solid #e5d7b5;
+      border-radius: 10px;
+      line-height: 1.7;
     }
 
     .purchase-card {
+      margin-top: 15px;
+      padding: 18px;
       background: #faf7f0;
       border: 1px solid #e5d7b5;
       border-radius: 12px;
-      padding: 18px;
-      margin-top: 12px;
-    }
-
-    .purchase-card strong {
-      color: #333;
+      line-height: 1.7;
     }
 
     .small {
@@ -182,26 +185,10 @@
       margin-top: 15px;
     }
 
-    .customer-info {
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 9px;
-      background: #f5f5f5;
-      color: #444;
-    }
-
-    @media (max-width: 650px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      .full {
-        grid-column: auto;
-      }
-
-      .card {
-        padding: 20px;
-      }
+    .section-divider {
+      margin: 35px 0;
+      border: none;
+      border-top: 2px solid #eee;
     }
   </style>
 </head>
@@ -210,7 +197,9 @@
 
 <div class="container">
 
-  <!-- ================= LOGIN ================= -->
+  <!-- =========================================
+       LOGIN
+  ========================================== -->
 
   <div class="card" id="loginSection">
 
@@ -220,6 +209,7 @@
     <h2>Admin Login</h2>
 
     <label>Admin Email</label>
+
     <input
       type="email"
       id="loginEmail"
@@ -227,6 +217,7 @@
     >
 
     <label>Password</label>
+
     <input
       type="password"
       id="loginPassword"
@@ -242,230 +233,280 @@
   </div>
 
 
-  <!-- ================= ADMIN ================= -->
+  <!-- =========================================
+       ADMIN DASHBOARD
+  ========================================== -->
 
-  <div class="hidden" id="adminSection">
+  <div class="card hidden" id="adminSection">
 
-    <div class="card">
+    <div class="logo">ANUVI</div>
 
-      <div class="logo">ANUVI</div>
-      <div class="subtitle">Couture Admin Panel</div>
-
-      <!-- CREATE MEMBERSHIP -->
-
-      <h2>Create New Membership</h2>
-
-      <div class="grid">
-
-        <div>
-          <label>Customer Name</label>
-          <input
-            type="text"
-            id="customerName"
-            placeholder="Enter customer name"
-          >
-        </div>
-
-        <div>
-          <label>Mobile Number</label>
-          <input
-            type="tel"
-            id="customerMobile"
-            placeholder="10 digit mobile number"
-            maxlength="10"
-          >
-        </div>
-
-        <div class="full">
-          <label>Email</label>
-          <input
-            type="email"
-            id="customerEmail"
-            placeholder="Enter customer email"
-          >
-        </div>
-
-      </div>
-
-      <button onclick="createMembership()">
-        Create Membership
-      </button>
-
-      <div id="membershipMessage"></div>
-
-      <div class="small">
-        Membership validity: 1 year
-      </div>
+    <div class="subtitle">
+      Couture Admin Panel
+    </div>
 
 
-      <!-- ADD PURCHASE -->
+    <!-- =======================================
+         CREATE MEMBERSHIP
+    ======================================== -->
 
-      <h2 class="section-title">
-        Add Purchase
-      </h2>
+    <h2>Create New Membership</h2>
 
-      <label>Membership ID</label>
+    <label>Customer Name</label>
 
-      <input
-        type="text"
-        id="purchaseMembershipId"
-        placeholder="Example: ANUVI001"
-        onblur="findCustomer()"
-      >
+    <input
+      type="text"
+      id="customerName"
+      placeholder="Enter customer name"
+    >
 
-      <div id="customerInfo"></div>
+    <label>Mobile Number</label>
 
+    <input
+      type="tel"
+      id="customerMobile"
+      placeholder="Enter 10 digit mobile number"
+      maxlength="10"
+    >
 
-      <div class="grid">
+    <label>Email</label>
 
-        <div>
-          <label>Purchase Date</label>
-          <input
-            type="date"
-            id="purchaseDate"
-          >
-        </div>
+    <input
+      type="email"
+      id="customerEmail"
+      placeholder="Enter customer email"
+    >
 
-        <div>
-          <label>Invoice / Bill No.</label>
-          <input
-            type="text"
-            id="invoiceNumber"
-            placeholder="Example: INV001"
-          >
-        </div>
+    <button onclick="createMembership()">
+      Create Membership
+    </button>
 
-        <div>
-          <label>Product Name</label>
-          <input
-            type="text"
-            id="productName"
-            placeholder="Example: Co-ord Set"
-          >
-        </div>
-
-        <div>
-          <label>Category</label>
-          <select id="category">
-            <option value="">Select Category</option>
-            <option value="Dress">Dress</option>
-            <option value="Co-ord Set">Co-ord Set</option>
-            <option value="Kurta">Kurta</option>
-            <option value="Top">Top</option>
-            <option value="Skirt">Skirt</option>
-            <option value="Jewellery">Jewellery</option>
-            <option value="Accessories">Accessories</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Quantity</label>
-          <input
-            type="number"
-            id="quantity"
-            value="1"
-            min="1"
-          >
-        </div>
-
-        <div>
-          <label>Original Price / Cost</label>
-          <input
-            type="number"
-            id="originalPrice"
-            placeholder="₹0"
-            min="0"
-            step="0.01"
-            oninput="calculateFinalAmount()"
-          >
-        </div>
-
-        <div>
-          <label>Discount</label>
-          <input
-            type="number"
-            id="discount"
-            placeholder="₹0"
-            value="0"
-            min="0"
-            step="0.01"
-            oninput="calculateFinalAmount()"
-          >
-        </div>
-
-        <div>
-          <label>Final Amount</label>
-          <input
-            type="number"
-            id="finalAmount"
-            placeholder="₹0"
-            min="0"
-            step="0.01"
-          >
-        </div>
-
-        <div>
-          <label>Payment Method</label>
-          <select id="paymentMethod">
-            <option value="Cash">Cash</option>
-            <option value="UPI">UPI</option>
-            <option value="Card">Card</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Sales Person</label>
-          <input
-            type="text"
-            id="salesPerson"
-            placeholder="Staff name"
-          >
-        </div>
-
-        <div class="full">
-          <label>Notes</label>
-          <textarea
-            id="notes"
-            placeholder="Any notes about this purchase"
-          ></textarea>
-        </div>
-
-      </div>
-
-      <button onclick="addPurchase()">
-        Add Purchase
-      </button>
-
-      <div id="purchaseMessage"></div>
+    <div id="membershipMessage"></div>
 
 
-      <!-- PURCHASE HISTORY -->
-
-      <h2 class="section-title">
-        Purchase History
-      </h2>
-
-      <label>Search by Membership ID</label>
-
-      <input
-        type="text"
-        id="historyMembershipId"
-        placeholder="Example: ANUVI001"
-      >
-
-      <button onclick="loadPurchaseHistory()">
-        View Purchase History
-      </button>
-
-      <div id="purchaseHistory"></div>
+    <hr class="section-divider">
 
 
-      <button class="logout" onclick="logoutAdmin()">
-        Logout
-      </button>
+    <!-- =======================================
+         ADD PURCHASE
+    ======================================== -->
 
+    <h2>Add Purchase</h2>
+
+    <label>Customer Mobile Number</label>
+
+    <input
+      type="tel"
+      id="purchaseMobile"
+      placeholder="Enter 10 digit mobile number"
+      maxlength="10"
+      onblur="findCustomer()"
+    >
+
+    <div id="customerInfo"></div>
+
+
+    <label>Purchase Date</label>
+
+    <input
+      type="date"
+      id="purchaseDate"
+    >
+
+
+    <label>Invoice / Bill Number</label>
+
+    <input
+      type="text"
+      id="invoiceNumber"
+      placeholder="Example: INV001"
+    >
+
+
+    <label>Product Name</label>
+
+    <input
+      type="text"
+      id="productName"
+      placeholder="Example: Floral Dress"
+    >
+
+
+    <label>Product Category</label>
+
+    <select id="category">
+
+      <option value="">
+        Select Category
+      </option>
+
+      <option value="Dress">
+        Dress
+      </option>
+
+      <option value="Kurti">
+        Kurti
+      </option>
+
+      <option value="Co-ord Set">
+        Co-ord Set
+      </option>
+
+      <option value="Top">
+        Top
+      </option>
+
+      <option value="Skirt">
+        Skirt
+      </option>
+
+      <option value="Jewellery">
+        Jewellery
+      </option>
+
+      <option value="Accessories">
+        Accessories
+      </option>
+
+      <option value="Other">
+        Other
+      </option>
+
+    </select>
+
+
+    <label>Quantity</label>
+
+    <input
+      type="number"
+      id="quantity"
+      min="1"
+      value="1"
+    >
+
+
+    <label>Original Price / Cost</label>
+
+    <input
+      type="number"
+      id="originalPrice"
+      min="0"
+      step="0.01"
+      placeholder="Example: 1000"
+    >
+
+
+    <label>Discount</label>
+
+    <input
+      type="number"
+      id="discount"
+      min="0"
+      step="0.01"
+      value="0"
+      placeholder="Example: 100"
+    >
+
+
+    <label>Final Amount</label>
+
+    <input
+      type="number"
+      id="finalAmount"
+      min="0"
+      step="0.01"
+      placeholder="Example: 900"
+    >
+
+
+    <label>Payment Method</label>
+
+    <select id="paymentMethod">
+
+      <option value="Cash">
+        Cash
+      </option>
+
+      <option value="UPI">
+        UPI
+      </option>
+
+      <option value="Card">
+        Card
+      </option>
+
+      <option value="Other">
+        Other
+      </option>
+
+    </select>
+
+
+    <label>Sales Person / Staff</label>
+
+    <input
+      type="text"
+      id="salesPerson"
+      placeholder="Enter staff name"
+    >
+
+
+    <label>Notes</label>
+
+    <textarea
+      id="notes"
+      placeholder="Any additional notes..."
+    ></textarea>
+
+
+    <button onclick="addPurchase()">
+      Add Purchase
+    </button>
+
+    <div id="purchaseMessage"></div>
+
+
+    <hr class="section-divider">
+
+
+    <!-- =======================================
+         PURCHASE HISTORY
+    ======================================== -->
+
+    <h2>Purchase History</h2>
+
+    <label>Search by Mobile Number</label>
+
+    <input
+      type="tel"
+      id="historyMobile"
+      placeholder="Enter 10 digit mobile number"
+      maxlength="10"
+    >
+
+
+    <button onclick="loadPurchaseHistory()">
+      Search Purchase History
+    </button>
+
+
+    <div id="purchaseHistory"></div>
+
+
+    <!-- =======================================
+         LOGOUT
+    ======================================== -->
+
+    <button
+      class="logout"
+      onclick="logoutAdmin()"
+    >
+      Logout
+    </button>
+
+
+    <div class="small">
+      Membership validity: 1 year
     </div>
 
   </div>
@@ -475,15 +516,15 @@
 
 <script>
 
-  // ==============================
+  // ==========================================
   // SUPABASE CONNECTION
-  // ==============================
+  // ==========================================
 
   const SUPABASE_URL =
     "https://vwcabveqbupgomtxbank.supabase.co";
 
   const SUPABASE_KEY =
-    "sb_publishable_ptUS0rXG84wr7A-53970aA_Y328CYJj";
+    "sb_publishable_ptUS0rX84wr7A-53970aA_Y328CYJj";
 
   const supabaseClient =
     window.supabase.createClient(
@@ -492,36 +533,50 @@
     );
 
 
-  // ==============================
-  // LOGIN
-  // ==============================
+  // ==========================================
+  // ADMIN LOGIN
+  // ==========================================
 
   async function loginAdmin() {
 
     const email =
-      document.getElementById("loginEmail").value.trim();
+      document
+        .getElementById("loginEmail")
+        .value
+        .trim();
 
     const password =
-      document.getElementById("loginPassword").value;
+      document
+        .getElementById("loginPassword")
+        .value;
 
     const message =
-      document.getElementById("loginMessage");
+      document
+        .getElementById("loginMessage");
 
     message.innerHTML = "";
+
 
     if (!email || !password) {
 
       message.innerHTML =
-        '<div class="message error">Please enter email and password.</div>';
+        '<div class="message error">' +
+        'Please enter email and password.' +
+        '</div>';
 
       return;
     }
 
-    const { error } =
+
+    const { data, error } =
       await supabaseClient.auth.signInWithPassword({
+
         email: email,
+
         password: password
+
       });
+
 
     if (error) {
 
@@ -533,72 +588,141 @@
       return;
     }
 
-    document.getElementById("loginSection")
-      .classList.add("hidden");
 
-    document.getElementById("adminSection")
-      .classList.remove("hidden");
+    document
+      .getElementById("loginSection")
+      .classList
+      .add("hidden");
 
-    setTodayDate();
+
+    document
+      .getElementById("adminSection")
+      .classList
+      .remove("hidden");
+
   }
 
 
-  // ==============================
+  // ==========================================
   // CREATE MEMBERSHIP
-  // ==============================
+  // ==========================================
 
   async function createMembership() {
 
     const name =
-      document.getElementById("customerName")
-        .value.trim();
+      document
+        .getElementById("customerName")
+        .value
+        .trim();
 
     const mobile =
-      document.getElementById("customerMobile")
-        .value.trim();
+      document
+        .getElementById("customerMobile")
+        .value
+        .trim();
 
     const email =
-      document.getElementById("customerEmail")
-        .value.trim();
+      document
+        .getElementById("customerEmail")
+        .value
+        .trim();
 
     const message =
-      document.getElementById("membershipMessage");
+      document
+        .getElementById("membershipMessage");
 
     message.innerHTML = "";
+
+
+    // Check name
 
     if (!name) {
 
       message.innerHTML =
-        '<div class="message error">Please enter customer name.</div>';
+        '<div class="message error">' +
+        'Please enter customer name.' +
+        '</div>';
 
       return;
     }
+
+
+    // Check mobile
 
     if (!/^[0-9]{10}$/.test(mobile)) {
 
       message.innerHTML =
-        '<div class="message error">Please enter a valid 10 digit mobile number.</div>';
+        '<div class="message error">' +
+        'Please enter a valid 10 digit mobile number.' +
+        '</div>';
 
       return;
     }
+
+
+    // Check email
 
     if (!email) {
 
       message.innerHTML =
-        '<div class="message error">Please enter customer email.</div>';
+        '<div class="message error">' +
+        'Please enter customer email.' +
+        '</div>';
 
       return;
     }
 
 
-    // Check latest membership
+    // Check whether mobile already exists
 
-    const { data: customers, error: fetchError } =
+    const {
+      data: existingCustomer,
+      error: existingError
+    } =
       await supabaseClient
         .from("Customers")
         .select("Membership_id")
-        .order("Membership_id", { ascending: false })
+        .eq("Contact Number", mobile)
+        .maybeSingle();
+
+
+    if (existingError) {
+
+      message.innerHTML =
+        '<div class="message error">' +
+        existingError.message +
+        '</div>';
+
+      return;
+    }
+
+
+    if (existingCustomer) {
+
+      message.innerHTML =
+        '<div class="message error">' +
+        'This mobile number already has a membership: ' +
+        existingCustomer.Membership_id +
+        '</div>';
+
+      return;
+    }
+
+
+    // Get latest membership ID
+
+    const {
+      data: customers,
+      error: fetchError
+    } =
+      await supabaseClient
+        .from("Customers")
+        .select("Membership_id")
+        .order("Membership_id", {
+          ascending: false
+        })
         .limit(1);
+
 
     if (fetchError) {
 
@@ -611,12 +735,19 @@
     }
 
 
+    // Generate next membership number
+
     let nextNumber = 1;
 
-    if (customers && customers.length > 0) {
+
+    if (
+      customers &&
+      customers.length > 0
+    ) {
 
       const lastId =
         customers[0].Membership_id;
+
 
       const numberPart =
         parseInt(
@@ -624,22 +755,32 @@
           10
         );
 
+
       if (!isNaN(numberPart)) {
-        nextNumber = numberPart + 1;
+
+        nextNumber =
+          numberPart + 1;
+
       }
+
     }
 
 
     const membershipId =
       "ANUVI" +
-      String(nextNumber).padStart(3, "0");
+      String(nextNumber)
+        .padStart(3, "0");
 
+
+    // Dates
 
     const membershipDate =
       new Date();
 
+
     const validTill =
       new Date();
+
 
     validTill.setFullYear(
       validTill.getFullYear() + 1
@@ -647,25 +788,37 @@
 
 
     const membershipDateString =
-      membershipDate.toISOString().split("T")[0];
+      membershipDate
+        .toISOString()
+        .split("T")[0];
 
 
     const validTillString =
-      validTill.toISOString().split("T")[0];
+      validTill
+        .toISOString()
+        .split("T")[0];
 
 
-    const { error: insertError } =
+    // Insert customer
+
+    const {
+      error: insertError
+    } =
       await supabaseClient
         .from("Customers")
         .insert([{
 
-          Membership_id: membershipId,
+          Membership_id:
+            membershipId,
 
-          Customer_name: name,
+          Customer_name:
+            name,
 
-          "Contact Number": mobile,
+          "Contact Number":
+            mobile,
 
-          Email: email,
+          Email:
+            email,
 
           Membership_date:
             membershipDateString,
@@ -687,6 +840,8 @@
     }
 
 
+    // Success
+
     message.innerHTML =
 
       '<div class="message success">' +
@@ -701,11 +856,13 @@
       membershipId +
       '</div>' +
 
-      '<div><strong>Customer:</strong> ' +
+      '<div>' +
+      '<strong>Customer:</strong> ' +
       name +
       '</div>' +
 
-      '<div><strong>Valid Till:</strong> ' +
+      '<div>' +
+      '<strong>Valid Till:</strong> ' +
       validTillString +
       '</div>' +
 
@@ -714,43 +871,70 @@
       '</div>';
 
 
-    document.getElementById("customerName")
+    // Clear form
+
+    document
+      .getElementById("customerName")
       .value = "";
 
-    document.getElementById("customerMobile")
+
+    document
+      .getElementById("customerMobile")
       .value = "";
 
-    document.getElementById("customerEmail")
+
+    document
+      .getElementById("customerEmail")
       .value = "";
+
   }
 
 
-  // ==============================
-  // FIND CUSTOMER
-  // ==============================
+  // ==========================================
+  // FIND CUSTOMER BY MOBILE
+  // ==========================================
 
   async function findCustomer() {
 
-    const membershipId =
-      document.getElementById("purchaseMembershipId")
-        .value.trim()
-        .toUpperCase();
+    const mobile =
+      document
+        .getElementById("purchaseMobile")
+        .value
+        .trim();
 
     const info =
-      document.getElementById("customerInfo");
+      document
+        .getElementById("customerInfo");
 
     info.innerHTML = "";
 
-    if (!membershipId) {
+
+    if (!mobile) {
       return;
     }
 
 
-    const { data, error } =
+    if (!/^[0-9]{10}$/.test(mobile)) {
+
+      info.innerHTML =
+        '<div class="message error">' +
+        'Please enter a valid 10 digit mobile number.' +
+        '</div>';
+
+      return;
+    }
+
+
+    const {
+      data,
+      error
+    } =
       await supabaseClient
         .from("Customers")
-        .select("Membership_id, Customer_name, Contact Number")
-        .eq("Membership_id", membershipId)
+        .select(
+          "Membership_id, Customer_name"
+        )
+        .eq("Contact Number", mobile)
         .maybeSingle();
 
 
@@ -768,7 +952,9 @@
     if (!data) {
 
       info.innerHTML =
-        '<div class="message error">Membership ID not found.</div>';
+        '<div class="message error">' +
+        'Customer not found. Please check mobile number.' +
+        '</div>';
 
       return;
     }
@@ -783,142 +969,178 @@
 
       '<br>' +
 
-      '<strong>Mobile:</strong> ' +
-      data["Contact Number"] +
+      '<strong>Membership ID:</strong> ' +
+      data.Membership_id +
 
       '</div>';
+
   }
 
 
-  // ==============================
-  // CALCULATE FINAL AMOUNT
-  // ==============================
-
-  function calculateFinalAmount() {
-
-    const original =
-      parseFloat(
-        document.getElementById("originalPrice").value
-      ) || 0;
-
-    const discount =
-      parseFloat(
-        document.getElementById("discount").value
-      ) || 0;
-
-    const finalAmount =
-      Math.max(original - discount, 0);
-
-    document.getElementById("finalAmount")
-      .value = finalAmount.toFixed(2);
-  }
-
-
-  // ==============================
+  // ==========================================
   // ADD PURCHASE
-  // ==============================
+  // ==========================================
 
   async function addPurchase() {
 
-    const membershipId =
-      document.getElementById("purchaseMembershipId")
-        .value.trim()
-        .toUpperCase();
+    const mobile =
+      document
+        .getElementById("purchaseMobile")
+        .value
+        .trim();
+
 
     const purchaseDate =
-      document.getElementById("purchaseDate").value;
+      document
+        .getElementById("purchaseDate")
+        .value;
+
 
     const invoiceNumber =
-      document.getElementById("invoiceNumber")
-        .value.trim();
+      document
+        .getElementById("invoiceNumber")
+        .value
+        .trim();
+
 
     const productName =
-      document.getElementById("productName")
-        .value.trim();
+      document
+        .getElementById("productName")
+        .value
+        .trim();
+
 
     const category =
-      document.getElementById("category").value;
+      document
+        .getElementById("category")
+        .value;
+
 
     const quantity =
       parseInt(
-        document.getElementById("quantity").value,
+        document
+          .getElementById("quantity")
+          .value,
         10
       ) || 1;
 
+
     const originalPrice =
       parseFloat(
-        document.getElementById("originalPrice").value
+        document
+          .getElementById("originalPrice")
+          .value
       ) || 0;
+
 
     const discount =
       parseFloat(
-        document.getElementById("discount").value
+        document
+          .getElementById("discount")
+          .value
       ) || 0;
+
 
     const finalAmount =
       parseFloat(
-        document.getElementById("finalAmount").value
+        document
+          .getElementById("finalAmount")
+          .value
       ) || 0;
 
+
     const paymentMethod =
-      document.getElementById("paymentMethod").value;
+      document
+        .getElementById("paymentMethod")
+        .value;
+
 
     const salesPerson =
-      document.getElementById("salesPerson")
-        .value.trim();
+      document
+        .getElementById("salesPerson")
+        .value
+        .trim();
+
 
     const notes =
-      document.getElementById("notes")
-        .value.trim();
+      document
+        .getElementById("notes")
+        .value
+        .trim();
+
 
     const message =
-      document.getElementById("purchaseMessage");
+      document
+        .getElementById("purchaseMessage");
+
 
     message.innerHTML = "";
 
 
-    // Validation
+    // Validate mobile
 
-    if (!membershipId) {
+    if (!/^[0-9]{10}$/.test(mobile)) {
 
       message.innerHTML =
-        '<div class="message error">Please enter Membership ID.</div>';
+        '<div class="message error">' +
+        'Please enter a valid 10 digit mobile number.' +
+        '</div>';
 
       return;
     }
+
+
+    // Validate date
 
     if (!purchaseDate) {
 
       message.innerHTML =
-        '<div class="message error">Please select purchase date.</div>';
+        '<div class="message error">' +
+        'Please select purchase date.' +
+        '</div>';
 
       return;
     }
+
+
+    // Validate product
 
     if (!productName) {
 
       message.innerHTML =
-        '<div class="message error">Please enter product name.</div>';
+        '<div class="message error">' +
+        'Please enter product name.' +
+        '</div>';
 
       return;
     }
+
+
+    // Validate quantity
 
     if (quantity < 1) {
 
       message.innerHTML =
-        '<div class="message error">Quantity must be at least 1.</div>';
+        '<div class="message error">' +
+        'Quantity must be at least 1.' +
+        '</div>';
 
       return;
     }
 
 
-    // Verify customer
+    // Find customer
 
-    const { data: customer, error: customerError } =
+    const {
+      data: customer,
+      error: customerError
+    } =
       await supabaseClient
         .from("Customers")
-        .select("Membership_id")
-        .eq("Membership_id", membershipId)
+        .select(
+          "Membership_id, Customer_name"
+        )
+        .eq("Contact Number", mobile)
         .maybeSingle();
 
 
@@ -936,7 +1158,9 @@
     if (!customer) {
 
       message.innerHTML =
-        '<div class="message error">Membership ID does not exist.</div>';
+        '<div class="message error">' +
+        'Customer not found. Please check mobile number.' +
+        '</div>';
 
       return;
     }
@@ -944,13 +1168,15 @@
 
     // Insert purchase
 
-    const { error } =
+    const {
+      error
+    } =
       await supabaseClient
         .from("Purchases")
         .insert([{
 
           Membership_id:
-            membershipId,
+            customer.Membership_id,
 
           Purchase_date:
             purchaseDate,
@@ -999,6 +1225,8 @@
     }
 
 
+    // Success
+
     message.innerHTML =
       '<div class="message success">' +
       'Purchase added successfully! ✓' +
@@ -1007,73 +1235,163 @@
 
     // Clear purchase form
 
-    document.getElementById("purchaseMembershipId")
+    document
+      .getElementById("purchaseMobile")
       .value = "";
 
-    document.getElementById("customerInfo")
+
+    document
+      .getElementById("customerInfo")
       .innerHTML = "";
 
-    document.getElementById("invoiceNumber")
+
+    document
+      .getElementById("purchaseDate")
       .value = "";
 
-    document.getElementById("productName")
+
+    document
+      .getElementById("invoiceNumber")
       .value = "";
 
-    document.getElementById("category")
+
+    document
+      .getElementById("productName")
       .value = "";
 
-    document.getElementById("quantity")
+
+    document
+      .getElementById("category")
+      .value = "";
+
+
+    document
+      .getElementById("quantity")
       .value = "1";
 
-    document.getElementById("originalPrice")
+
+    document
+      .getElementById("originalPrice")
       .value = "";
 
-    document.getElementById("discount")
+
+    document
+      .getElementById("discount")
       .value = "0";
 
-    document.getElementById("finalAmount")
+
+    document
+      .getElementById("finalAmount")
       .value = "";
 
-    document.getElementById("salesPerson")
+
+    document
+      .getElementById("paymentMethod")
+      .value = "Cash";
+
+
+    document
+      .getElementById("salesPerson")
       .value = "";
 
-    document.getElementById("notes")
+
+    document
+      .getElementById("notes")
       .value = "";
 
   }
 
 
-  // ==============================
-  // PURCHASE HISTORY
-  // ==============================
+  // ==========================================
+  // PURCHASE HISTORY BY MOBILE
+  // ==========================================
 
   async function loadPurchaseHistory() {
 
-    const membershipId =
-      document.getElementById("historyMembershipId")
-        .value.trim()
-        .toUpperCase();
+    const mobile =
+      document
+        .getElementById("historyMobile")
+        .value
+        .trim();
+
 
     const history =
-      document.getElementById("purchaseHistory");
+      document
+        .getElementById("purchaseHistory");
+
 
     history.innerHTML = "";
 
-    if (!membershipId) {
+
+    // Validate mobile
+
+    if (!/^[0-9]{10}$/.test(mobile)) {
 
       history.innerHTML =
-        '<div class="message error">Please enter Membership ID.</div>';
+        '<div class="message error">' +
+        'Please enter a valid 10 digit mobile number.' +
+        '</div>';
 
       return;
     }
 
 
-    const { data, error } =
+    // Find customer
+
+    const {
+      data: customer,
+      error: customerError
+    } =
+      await supabaseClient
+        .from("Customers")
+        .select(
+          "Membership_id, Customer_name"
+        )
+        .eq("Contact Number", mobile)
+        .maybeSingle();
+
+
+    if (customerError) {
+
+      history.innerHTML =
+        '<div class="message error">' +
+        customerError.message +
+        '</div>';
+
+      return;
+    }
+
+
+    if (!customer) {
+
+      history.innerHTML =
+        '<div class="message error">' +
+        'Customer not found. Please check mobile number.' +
+        '</div>';
+
+      return;
+    }
+
+
+    // Get purchase history
+
+    const {
+      data,
+      error
+    } =
       await supabaseClient
         .from("Purchases")
         .select("*")
-        .eq("Membership_id", membershipId)
-        .order("Purchase_date", { ascending: false });
+        .eq(
+          "Membership_id",
+          customer.Membership_id
+        )
+        .order(
+          "Purchase_date",
+          {
+            ascending: false
+          }
+        );
 
 
     if (error) {
@@ -1087,16 +1405,39 @@
     }
 
 
+    // Customer information
+
+    let html =
+
+      '<div class="customer-info">' +
+
+      '<strong>Customer:</strong> ' +
+      customer.Customer_name +
+
+      '<br>' +
+
+      '<strong>Membership ID:</strong> ' +
+      customer.Membership_id +
+
+      '</div>';
+
+
+    // No purchases
+
     if (!data || data.length === 0) {
 
-      history.innerHTML =
-        '<div class="message error">No purchase history found.</div>';
+      html +=
+        '<div class="message error">' +
+        'No purchase history found.' +
+        '</div>';
+
+      history.innerHTML = html;
 
       return;
     }
 
 
-    let html = "";
+    // Display purchases
 
     data.forEach(function(purchase) {
 
@@ -1107,7 +1448,7 @@
         '<strong>Date:</strong> ' +
         (purchase.Purchase_date || "-") +
 
-        '<br><br>' +
+        '<br>' +
 
         '<strong>Product:</strong> ' +
         (purchase.Product_name || "-") +
@@ -1125,17 +1466,23 @@
         '<br>' +
 
         '<strong>Original Price / Cost:</strong> ₹' +
-        Number(purchase.Original_price || 0).toFixed(2) +
+        Number(
+          purchase.Original_price || 0
+        ).toFixed(2) +
 
         '<br>' +
 
         '<strong>Discount:</strong> ₹' +
-        Number(purchase.Discount || 0).toFixed(2) +
+        Number(
+          purchase.Discount || 0
+        ).toFixed(2) +
 
         '<br>' +
 
         '<strong>Final Amount:</strong> ₹' +
-        Number(purchase.Amount || 0).toFixed(2) +
+        Number(
+          purchase.Amount || 0
+        ).toFixed(2) +
 
         '<br>' +
 
@@ -1158,64 +1505,69 @@
         (purchase.Notes || "-") +
 
         '</div>';
+
     });
 
 
     history.innerHTML = html;
+
   }
 
 
-  // ==============================
-  // TODAY DATE
-  // ==============================
-
-  function setTodayDate() {
-
-    const today =
-      new Date().toISOString().split("T")[0];
-
-    document.getElementById("purchaseDate")
-      .value = today;
-  }
-
-
-  // ==============================
+  // ==========================================
   // LOGOUT
-  // ==============================
+  // ==========================================
 
   async function logoutAdmin() {
 
     await supabaseClient.auth.signOut();
 
-    document.getElementById("adminSection")
-      .classList.add("hidden");
 
-    document.getElementById("loginSection")
-      .classList.remove("hidden");
+    document
+      .getElementById("adminSection")
+      .classList
+      .add("hidden");
+
+
+    document
+      .getElementById("loginSection")
+      .classList
+      .remove("hidden");
+
   }
 
 
-  // ==============================
+  // ==========================================
   // CHECK EXISTING LOGIN
-  // ==============================
+  // ==========================================
 
   async function checkLogin() {
 
-    const { data } =
+    const {
+      data
+    } =
       await supabaseClient.auth.getSession();
+
 
     if (data.session) {
 
-      document.getElementById("loginSection")
-        .classList.add("hidden");
+      document
+        .getElementById("loginSection")
+        .classList
+        .add("hidden");
 
-      document.getElementById("adminSection")
-        .classList.remove("hidden");
 
-      setTodayDate();
+      document
+        .getElementById("adminSection")
+        .classList
+        .remove("hidden");
+
     }
+
   }
 
+
+  // Run login check
 
   checkLogin();
 
