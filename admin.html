@@ -58,10 +58,6 @@ h2{
   color:#222;
 }
 
-h3{
-  color:#333;
-}
-
 label{
   display:block;
   margin-top:15px;
@@ -523,7 +519,7 @@ const SUPABASE_URL =
   "https://vwcabveqbupgomtxbank.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_ptUS0rX84wr7A-53970aA_Y328CYJj";
+  "sb_publishable_ptUS0rXG84wr7A-53970aA_Y328CYJj";
 
 const supabaseClient =
   window.supabase.createClient(
@@ -564,7 +560,7 @@ async function loginAdmin(){
     return;
   }
 
-  const { data, error } =
+  const { error } =
     await supabaseClient.auth.signInWithPassword({
       email:email,
       password:password
@@ -574,7 +570,7 @@ async function loginAdmin(){
 
     message.innerHTML =
       '<div class="message error">' +
-      error.message +
+      escapeHtml(error.message) +
       '</div>';
 
     return;
@@ -588,6 +584,7 @@ async function loginAdmin(){
     .getElementById("adminSection")
     .classList.remove("hidden");
 
+  setTodayDate();
 }
 
 
@@ -671,7 +668,7 @@ async function createMembership(){
 
     message.innerHTML =
       '<div class="message error">' +
-      existingError.message +
+      escapeHtml(existingError.message) +
       '</div>';
 
     return;
@@ -683,7 +680,7 @@ async function createMembership(){
     message.innerHTML =
       '<div class="message error">' +
       'This mobile number already has membership: ' +
-      existingCustomer.Membership_id +
+      escapeHtml(existingCustomer.Membership_id) +
       '</div>';
 
     return;
@@ -707,7 +704,7 @@ async function createMembership(){
 
     message.innerHTML =
       '<div class="message error">' +
-      fetchError.message +
+      escapeHtml(fetchError.message) +
       '</div>';
 
     return;
@@ -715,7 +712,6 @@ async function createMembership(){
 
 
   let nextNumber = 1;
-
 
   if(customers && customers.length > 0){
 
@@ -731,7 +727,6 @@ async function createMembership(){
     if(!isNaN(numberPart)){
       nextNumber = numberPart + 1;
     }
-
   }
 
 
@@ -740,11 +735,9 @@ async function createMembership(){
     String(nextNumber).padStart(3,"0");
 
 
-  const today =
-    new Date();
+  const today = new Date();
 
-  const validTill =
-    new Date();
+  const validTill = new Date();
 
   validTill.setFullYear(
     validTill.getFullYear() + 1
@@ -790,7 +783,7 @@ async function createMembership(){
 
     message.innerHTML =
       '<div class="message error">' +
-      insertError.message +
+      escapeHtml(insertError.message) +
       '</div>';
 
     return;
@@ -808,15 +801,15 @@ async function createMembership(){
     '<div>Membership ID</div>' +
 
     '<div class="membership-id">' +
-    membershipId +
+    escapeHtml(membershipId) +
     '</div>' +
 
     '<div><strong>Customer:</strong> ' +
-    name +
+    escapeHtml(name) +
     '</div>' +
 
     '<div><strong>Mobile:</strong> ' +
-    mobile +
+    escapeHtml(mobile) +
     '</div>' +
 
     '<div><strong>Valid Till:</strong> ' +
@@ -831,7 +824,6 @@ async function createMembership(){
   document.getElementById("customerName").value="";
   document.getElementById("customerMobile").value="";
   document.getElementById("customerEmail").value="";
-
 }
 
 
@@ -852,11 +844,9 @@ async function findCustomer(){
 
   info.innerHTML = "";
 
-
   if(!mobile){
     return;
   }
-
 
   if(!/^[0-9]{10}$/.test(mobile)){
 
@@ -884,7 +874,7 @@ async function findCustomer(){
 
     info.innerHTML =
       '<div class="message error">' +
-      error.message +
+      escapeHtml(error.message) +
       '</div>';
 
     return;
@@ -915,7 +905,6 @@ async function findCustomer(){
     escapeHtml(data.Membership_id) +
 
     '</div>';
-
 }
 
 
@@ -939,21 +928,17 @@ function calculateFinalAmount(){
         .value
     ) || 0;
 
-
   let finalAmount =
     original - discount;
-
 
   if(finalAmount < 0){
     finalAmount = 0;
   }
 
-
   document
     .getElementById("finalAmount")
     .value =
       finalAmount.toFixed(2);
-
 }
 
 
@@ -1128,7 +1113,7 @@ async function addPurchase(){
 
     message.innerHTML =
       '<div class="message error">' +
-      customerError.message +
+      escapeHtml(customerError.message) +
       '</div>';
 
     return;
@@ -1196,7 +1181,7 @@ async function addPurchase(){
 
     message.innerHTML =
       '<div class="message error">' +
-      error.message +
+      escapeHtml(error.message) +
       '</div>';
 
     return;
@@ -1215,7 +1200,6 @@ async function addPurchase(){
 
   document.getElementById("purchaseMobile").value="";
   document.getElementById("customerInfo").innerHTML="";
-  document.getElementById("purchaseDate").value="";
   document.getElementById("invoiceNumber").value="";
   document.getElementById("productName").value="";
   document.getElementById("category").value="";
@@ -1227,6 +1211,7 @@ async function addPurchase(){
   document.getElementById("salesPerson").value="";
   document.getElementById("notes").value="";
 
+  setTodayDate();
 }
 
 
@@ -1277,7 +1262,7 @@ async function loadPurchaseHistory(){
 
     history.innerHTML =
       '<div class="message error">' +
-      customerError.message +
+      escapeHtml(customerError.message) +
       '</div>';
 
     return;
@@ -1318,7 +1303,7 @@ async function loadPurchaseHistory(){
 
     history.innerHTML =
       '<div class="message error">' +
-      error.message +
+      escapeHtml(error.message) +
       '</div>';
 
     return;
@@ -1438,7 +1423,6 @@ async function loadPurchaseHistory(){
 
 
   history.innerHTML = html;
-
 }
 
 
@@ -1457,7 +1441,6 @@ async function logoutAdmin(){
   document
     .getElementById("loginSection")
     .classList.remove("hidden");
-
 }
 
 
@@ -1480,8 +1463,8 @@ async function checkLogin(){
       .getElementById("adminSection")
       .classList.remove("hidden");
 
+    setTodayDate();
   }
-
 }
 
 
@@ -1509,7 +1492,6 @@ function formatDate(dateString){
     " " +
     parts[0]
   );
-
 }
 
 
@@ -1533,7 +1515,6 @@ function getMonthName(month){
   return months[
     parseInt(month,10)-1
   ] || month;
-
 }
 
 
@@ -1553,7 +1534,6 @@ function escapeHtml(value){
     .replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;")
     .replace(/'/g,"&#039;");
-
 }
 
 
@@ -1585,7 +1565,6 @@ function setTodayDate(){
       year + "-" +
       month + "-" +
       day;
-
 }
 
 
