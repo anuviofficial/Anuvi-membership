@@ -1106,11 +1106,20 @@
   const SUPABASE_URL =
     "https://vwcabveqbupgomtxbank.supabase.co";
 
-  const SUPABASE_KEY =
-    "sb_publishable_ptUS0rXG84wr7A-53970aA-53970aA_Y328CYJj".replace(
-      "ptUS0rXG84wr7A-53970aA-53970aA",
-      "ptUS0rXG84wr7A-53970aA"
-    );
+const SUPABASE_URL =
+  "https://vwcabveqbupgomtxbank.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_ptUS0rXG84wr7A-53970aA_Y328CYJj";
+
+const ADMIN_EMAIL =
+  "anuvioffice@gmail.com";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
   const ADMIN_EMAIL =
     "anuvioffice@gmail.com";
